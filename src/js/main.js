@@ -29,9 +29,21 @@ function setupEventListeners() {
         game.attackMob();
     });
 
-    // 인벤토리 버튼 (Phase 3에서 구현)
+    // 인벤토리 버튼
     document.getElementById('inventory-btn').addEventListener('click', () => {
-        console.log('인벤토리 버튼 클릭 (아직 미구현)');
+        ui.openInventory();
+    });
+
+    // 인벤토리 닫기
+    document.getElementById('close-inventory').addEventListener('click', () => {
+        ui.closeInventory();
+    });
+
+    // 모달 배경 클릭 시 닫기
+    document.getElementById('inventory-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'inventory-modal') {
+            ui.closeInventory();
+        }
     });
 
     // 강화 버튼 (Phase 4에서 구현)

@@ -35,6 +35,12 @@
             <div id="mob-hp">0 / 0</div>
         </div>
 
+        <!-- 장착 무기 정보 -->
+        <div id="equipped-weapon-info">
+            <div class="equipped-label">장착 무기</div>
+            <div id="equipped-weapon-details">무기 없음</div>
+        </div>
+
         <!-- 버튼 영역 -->
         <div class="button-area">
             <button id="inventory-btn">인벤토리</button>
@@ -42,8 +48,22 @@
         </div>
     </div>
 
+    <!-- 인벤토리 모달 -->
+    <div id="inventory-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>인벤토리</h2>
+                <button class="close-btn" id="close-inventory">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="inventory-list"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript 파일들 -->
     <script src="src/js/config.js"></script>
+    <script src="src/js/Weapon.js"></script>
     <script src="src/js/Mob.js"></script>
     <script src="src/js/GameManager.js"></script>
     <script src="src/js/UI.js"></script>

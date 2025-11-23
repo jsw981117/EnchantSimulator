@@ -64,7 +64,20 @@ class GameManager {
         const damage = this.getAttackPower();
         this.currentMob.takeDamage(damage);
 
+        // 무기 내구도 감소 확률
+        if (this.equippedWeapon && Math.random() < CONFIG.weapon.attackDurabilityChance) {
+            this.equippedWeapon.reduceDurability(1);
+
+            // 무기 파괴 체크
+            if (this.equippedWeapon.isDestroyed()) {
+                alert(`${this.equippedWeapon.getName()}이(가) 파괴되었습니다!`);
+                this.equippedWeapon = null;
+                ui.updateEquippedWeapon();
+            }
+        }
+
         ui.updateMob();
+        ui.updateEquippedWeapon();
 
         // 몹 처치
         if (this.currentMob.isDead()) {
@@ -82,6 +95,14 @@ class GameManager {
             this.addEnhanceStone(1);
         }
 
+        // 무기 드랍 확률
+        if (Math.random() < CONFIG.drop.weaponChance) {
+            const randomEnhanceLevel = Math.floor(Math.random() * 3); // 0~2 강화 수치
+            const weapon = new Weapon(randomEnhanceLevel);
+            this.addToInventory(weapon);
+            console.log(`${weapon.getName()} 획득!`);
+        }
+
         this.mobKillCount++;
 
         // 보스였으면 스테이지 증가
@@ -92,6 +113,42 @@ class GameManager {
 
         // 다음 몹 생성
         this.spawnMob();
+    }
+
+    // 인벤토리에 무기 추가
+    addToInventory(weapon) {
+        this.inventory.push(weapon);
+    }
+
+    // 무기 장착
+    equipWeapon(weapon) {
+        this.equippedWeapon = weapon;
+        ui.updateEquippedWeapon();
+    }
+
+    // 무기 장착 해제
+    unequipWeapon() {
+        this.equippedWeapon = null;
+        ui.updateEquippedWeapon();
+    }
+
+    // 무기 판매
+    sellWeapon(weapon) {
+        const index = this.inventory.indexOf(weapon);
+        if (index === -1) return false;
+
+        // 장착된 무기인 경우 장착 해제
+        if (this.equippedWeapon === weapon) {
+            this.unequipWeapon();
+        }
+
+        // 인벤토리에서 제거
+        this.inventory.splice(index, 1);
+
+        // 골드 획득
+        this.addGold(weapon.getSellPrice());
+
+        return true;
     }
 
     // 게임 시작
