@@ -9,8 +9,44 @@
 <body>
     <div id="game-container">
         <h1>Enchant Simulator</h1>
+
+        <!-- 상단 정보 -->
+        <div class="info-bar">
+            <div class="resource">
+                <span>골드:</span>
+                <span id="gold-display">0</span>
+            </div>
+            <div class="resource">
+                <span>강화석:</span>
+                <span id="stone-display">0</span>
+            </div>
+            <div class="resource">
+                <span>스테이지:</span>
+                <span id="stage-display">1</span>
+            </div>
+        </div>
+
+        <!-- 몹 영역 -->
+        <div id="mob-area">
+            <div id="mob-name">Mob</div>
+            <div class="hp-container">
+                <div id="hp-bar" class="hp-bar"></div>
+            </div>
+            <div id="mob-hp">0 / 0</div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="button-area">
+            <button id="inventory-btn">인벤토리</button>
+            <button id="enhance-btn">강화</button>
+        </div>
     </div>
 
+    <!-- JavaScript 파일들 -->
+    <script src="src/js/config.js"></script>
+    <script src="src/js/Mob.js"></script>
+    <script src="src/js/GameManager.js"></script>
+    <script src="src/js/UI.js"></script>
     <script src="src/js/main.js"></script>
 </body>
 </html>

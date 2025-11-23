@@ -17,9 +17,107 @@ body {
 #game-container {
     text-align: center;
     padding: 20px;
+    max-width: 800px;
+    width: 100%;
 }
 
 h1 {
     font-size: 2.5rem;
     margin-bottom: 20px;
+}
+
+/* 정보 바 */
+.info-bar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.resource {
+    font-size: 1.2rem;
+}
+
+.resource span:first-child {
+    color: #999;
+    margin-right: 5px;
+}
+
+.resource span:last-child {
+    color: #ffcc00;
+    font-weight: bold;
+}
+
+/* 몹 영역 */
+#mob-area {
+    background-color: #2a2a2a;
+    padding: 40px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#mob-area:hover {
+    transform: scale(1.02);
+}
+
+#mob-area:active {
+    transform: scale(0.98);
+}
+
+#mob-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #ff6666;
+}
+
+.hp-container {
+    background-color: #1a1a1a;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.hp-bar {
+    background: linear-gradient(90deg, #ff4444, #ff6666);
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s;
+}
+
+#mob-hp {
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+/* 버튼 영역 */
+.button-area {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+button {
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: 2px solid #555;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background-color: #4a4a4a;
+    border-color: #777;
+}
+
+button:active {
+    transform: scale(0.95);
 }
