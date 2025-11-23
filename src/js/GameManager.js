@@ -151,6 +151,75 @@ class GameManager {
         return true;
     }
 
+    // 무기 강화
+    enhanceWeapon(weapon, stoneCount) {
+        const cost = weapon.getEnhanceCost();
+
+        // 골드 확인
+        if (this.gold < cost) {
+            return { success: false, message: '골드가 부족합니다!' };
+        }
+
+        // 강화석 확인
+        if (this.enhanceStones < stoneCount) {
+            return { success: false, message: '강화석이 부족합니다!' };
+        }
+
+        // 골드 및 강화석 소비
+        this.useGold(cost);
+        this.useEnhanceStone(stoneCount);
+
+        // 성공 확률 계산
+        const successRate = weapon.getEnhanceSuccessRate(stoneCount);
+        const isSuccess = Math.random() < successRate;
+
+        if (isSuccess) {
+            // 강화 성공
+            weapon.enhanceSuccess();
+            ui.updateEquippedWeapon();
+            return {
+                success: true,
+                isEnhanceSuccess: true,
+                message: `강화 성공! ${weapon.getName()}이(가) 되었습니다!`,
+                weapon: weapon
+            };
+        } else {
+            // 강화 실패
+            weapon.reduceDurability(CONFIG.enhance.durabilityDecrease);
+
+            // 파괴 체크
+            if (weapon.isDestroyed()) {
+                // 무기 파괴
+                const index = this.inventory.indexOf(weapon);
+                if (index !== -1) {
+                    this.inventory.splice(index, 1);
+                }
+                if (this.equippedWeapon === weapon) {
+                    this.equippedWeapon = null;
+                }
+                ui.updateEquippedWeapon();
+
+                return {
+                    success: true,
+                    isEnhanceSuccess: false,
+                    isDestroyed: true,
+                    message: `강화 실패! ${weapon.getName()}이(가) 파괴되었습니다...`,
+                    weapon: null
+                };
+            } else {
+                // 파괴되지 않음
+                ui.updateEquippedWeapon();
+                return {
+                    success: true,
+                    isEnhanceSuccess: false,
+                    isDestroyed: false,
+                    message: `강화 실패! 내구도가 ${CONFIG.enhance.durabilityDecrease} 감소했습니다.`,
+                    weapon: weapon
+                };
+            }
+        }
+    }
+
     // 게임 시작
     start() {
         this.spawnMob();

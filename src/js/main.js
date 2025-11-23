@@ -46,8 +46,30 @@ function setupEventListeners() {
         }
     });
 
-    // 강화 버튼 (Phase 4에서 구현)
+    // 강화 버튼
     document.getElementById('enhance-btn').addEventListener('click', () => {
-        console.log('강화 버튼 클릭 (아직 미구현)');
+        ui.openEnhance();
+    });
+
+    // 강화 모달 닫기
+    document.getElementById('close-enhance').addEventListener('click', () => {
+        ui.closeEnhance();
+    });
+
+    // 강화 모달 배경 클릭 시 닫기
+    document.getElementById('enhance-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'enhance-modal') {
+            ui.closeEnhance();
+        }
+    });
+
+    // 강화석 슬라이더
+    document.getElementById('stone-slider').addEventListener('input', () => {
+        ui.updateEnhanceRate();
+    });
+
+    // 강화 실행 버튼
+    document.getElementById('enhance-execute-btn').addEventListener('click', () => {
+        ui.executeEnhance();
     });
 }
