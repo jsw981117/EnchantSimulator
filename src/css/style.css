@@ -392,3 +392,59 @@ button:active {
     background-color: #3a6a3a;
     border-color: #4a8a4a;
 }
+
+/* 상점 모달 */
+.shop-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.shop-tab {
+    flex: 1;
+    background-color: #3a3a3a;
+    border-color: #555;
+    padding: 12px;
+}
+
+.shop-tab.active {
+    background-color: #4a5a4a;
+    border-color: #6a8a6a;
+    color: #88ff88;
+}
+
+.shop-panel {
+    margin-bottom: 20px;
+}
+
+.buy-weapon-btn {
+    background-color: #2a4a5a;
+    border-color: #3a6a7a;
+}
+
+.buy-weapon-btn:hover {
+    background-color: #3a5a6a;
+}
+
+.sell-weapon-btn {
+    background-color: #5a2a2a;
+    border-color: #7a3a3a;
+}
+
+.sell-weapon-btn:hover {
+    background-color: #6a3a3a;
+}
+
+.shop-skip-btn {
+    width: 100%;
+    background-color: #4a4a2a;
+    border-color: #6a6a3a;
+    padding: 15px;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.shop-skip-btn:hover {
+    background-color: #5a5a3a;
+    border-color: #7a7a4a;
+}

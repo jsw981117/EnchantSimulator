@@ -72,4 +72,30 @@ function setupEventListeners() {
     document.getElementById('enhance-execute-btn').addEventListener('click', () => {
         ui.executeEnhance();
     });
+
+    // 상점 닫기 버튼
+    document.getElementById('close-shop').addEventListener('click', () => {
+        ui.closeShopModal();
+    });
+
+    // 상점 모달 배경 클릭 시 닫기
+    document.getElementById('shop-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'shop-modal') {
+            ui.closeShopModal();
+        }
+    });
+
+    // 상점 스킵 버튼
+    document.getElementById('shop-skip-btn').addEventListener('click', () => {
+        ui.closeShopModal();
+    });
+
+    // 상점 탭 버튼
+    document.getElementById('buy-tab').addEventListener('click', () => {
+        ui.switchShopTab('buy');
+    });
+
+    document.getElementById('sell-tab').addEventListener('click', () => {
+        ui.switchShopTab('sell');
+    });
 }

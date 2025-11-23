@@ -8,6 +8,7 @@ class GameManager {
         this.currentMob = null;
         this.equippedWeapon = null;
         this.inventory = [];
+        this.shopWeapons = [];
     }
 
     // 골드 획득
@@ -111,8 +112,13 @@ class GameManager {
             ui.updateStage();
         }
 
-        // 다음 몹 생성
-        this.spawnMob();
+        // 상점 등장 확률 체크
+        if (Math.random() < CONFIG.shop.appearChance) {
+            this.openShop();
+        } else {
+            // 다음 몹 생성
+            this.spawnMob();
+        }
     }
 
     // 인벤토리에 무기 추가
@@ -218,6 +224,52 @@ class GameManager {
                 };
             }
         }
+    }
+
+    // 상점 무기 생성
+    generateShopWeapons() {
+        this.shopWeapons = [];
+        for (let i = 0; i < CONFIG.shop.itemSlots; i++) {
+            const randomEnhanceLevel = Math.floor(Math.random() * 6); // 0~5 강화 수치
+            const weapon = new Weapon(randomEnhanceLevel);
+            this.shopWeapons.push(weapon);
+        }
+    }
+
+    // 상점 열기
+    openShop() {
+        this.generateShopWeapons();
+        ui.openShopModal();
+    }
+
+    // 무기 구매
+    buyWeapon(weapon) {
+        const cost = weapon.getBuyPrice();
+
+        // 골드 확인
+        if (this.gold < cost) {
+            return { success: false, message: '골드가 부족합니다!' };
+        }
+
+        // 골드 소비
+        this.useGold(cost);
+
+        // 인벤토리에 추가
+        this.addToInventory(weapon);
+
+        // 상점 목록에서 제거
+        const index = this.shopWeapons.indexOf(weapon);
+        if (index !== -1) {
+            this.shopWeapons.splice(index, 1);
+        }
+
+        return { success: true, message: `${weapon.getName()}을(를) 구매했습니다!` };
+    }
+
+    // 상점 닫기
+    closeShop() {
+        this.shopWeapons = [];
+        this.spawnMob();
     }
 
     // 게임 시작

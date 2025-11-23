@@ -21,6 +21,12 @@ class UI {
         this.elements.enhanceWeaponList = document.getElementById('enhance-weapon-list');
         this.elements.enhancePanel = document.getElementById('enhance-panel');
         this.selectedWeaponForEnhance = null;
+        this.elements.shopModal = document.getElementById('shop-modal');
+        this.elements.buyPanel = document.getElementById('buy-panel');
+        this.elements.sellPanel = document.getElementById('sell-panel');
+        this.elements.shopBuyList = document.getElementById('shop-buy-list');
+        this.elements.shopSellList = document.getElementById('shop-sell-list');
+        this.currentShopTab = 'buy';
     }
 
     // 자원 표시 업데이트
@@ -268,5 +274,131 @@ class UI {
             // 골드/강화석 부족
             alert(result.message);
         }
+    }
+
+    // 상점 모달 열기
+    openShopModal() {
+        this.currentShopTab = 'buy';
+        this.switchShopTab('buy');
+        this.elements.shopModal.style.display = 'flex';
+    }
+
+    // 상점 모달 닫기
+    closeShopModal() {
+        this.elements.shopModal.style.display = 'none';
+        game.closeShop();
+    }
+
+    // 상점 탭 전환
+    switchShopTab(tab) {
+        this.currentShopTab = tab;
+
+        // 탭 버튼 활성화 상태 변경
+        document.querySelectorAll('.shop-tab').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        if (tab === 'buy') {
+            document.getElementById('buy-tab').classList.add('active');
+            this.elements.buyPanel.style.display = 'block';
+            this.elements.sellPanel.style.display = 'none';
+            this.updateShopBuyList();
+        } else {
+            document.getElementById('sell-tab').classList.add('active');
+            this.elements.buyPanel.style.display = 'none';
+            this.elements.sellPanel.style.display = 'block';
+            this.updateShopSellList();
+        }
+    }
+
+    // 상점 구매 목록 업데이트
+    updateShopBuyList() {
+        this.elements.shopBuyList.innerHTML = '';
+
+        if (game.shopWeapons.length === 0) {
+            this.elements.shopBuyList.innerHTML = '<p class="empty-message">판매 중인 무기가 없습니다.</p>';
+            return;
+        }
+
+        game.shopWeapons.forEach(weapon => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'inventory-item';
+
+            itemDiv.innerHTML = `
+                <div class="weapon-info">
+                    <div class="weapon-name">${weapon.getName()}</div>
+                    <div class="weapon-stats">
+                        공격력: ${weapon.attack} |
+                        내구도: ${weapon.currentDurability}/${weapon.maxDurability} |
+                        가격: ${weapon.getBuyPrice()}G
+                    </div>
+                </div>
+                <div class="weapon-actions">
+                    <button class="buy-weapon-btn" data-weapon-id="${weapon.id}">구매</button>
+                </div>
+            `;
+
+            this.elements.shopBuyList.appendChild(itemDiv);
+        });
+
+        // 이벤트 리스너
+        document.querySelectorAll('.buy-weapon-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const weaponId = parseFloat(e.target.dataset.weaponId);
+                const weapon = game.shopWeapons.find(w => w.id === weaponId);
+
+                const result = game.buyWeapon(weapon);
+                if (result.success) {
+                    alert(result.message);
+                    this.updateShopBuyList();
+                } else {
+                    alert(result.message);
+                }
+            });
+        });
+    }
+
+    // 상점 판매 목록 업데이트
+    updateShopSellList() {
+        this.elements.shopSellList.innerHTML = '';
+
+        if (game.inventory.length === 0) {
+            this.elements.shopSellList.innerHTML = '<p class="empty-message">인벤토리가 비어있습니다.</p>';
+            return;
+        }
+
+        game.inventory.forEach(weapon => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'inventory-item';
+
+            itemDiv.innerHTML = `
+                <div class="weapon-info">
+                    <div class="weapon-name">${weapon.getName()}</div>
+                    <div class="weapon-stats">
+                        공격력: ${weapon.attack} |
+                        내구도: ${weapon.currentDurability}/${weapon.maxDurability} |
+                        판매가: ${weapon.getSellPrice()}G
+                    </div>
+                </div>
+                <div class="weapon-actions">
+                    <button class="sell-weapon-btn" data-weapon-id="${weapon.id}">판매</button>
+                </div>
+            `;
+
+            this.elements.shopSellList.appendChild(itemDiv);
+        });
+
+        // 이벤트 리스너
+        document.querySelectorAll('.sell-weapon-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const weaponId = parseFloat(e.target.dataset.weaponId);
+                const weapon = game.inventory.find(w => w.id === weaponId);
+
+                if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+                    game.sellWeapon(weapon);
+                    this.updateShopSellList();
+                }
+            });
+        });
     }
 }

@@ -113,6 +113,38 @@
         </div>
     </div>
 
+    <!-- 상점 모달 -->
+    <div id="shop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏪 상점</h2>
+                <button class="close-btn" id="close-shop">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 탭 버튼 -->
+                <div class="shop-tabs">
+                    <button class="shop-tab active" id="buy-tab">구매</button>
+                    <button class="shop-tab" id="sell-tab">판매</button>
+                </div>
+
+                <!-- 구매 탭 -->
+                <div id="buy-panel" class="shop-panel">
+                    <p class="info-text">무기를 구매하세요</p>
+                    <div id="shop-buy-list"></div>
+                </div>
+
+                <!-- 판매 탭 -->
+                <div id="sell-panel" class="shop-panel" style="display: none;">
+                    <p class="info-text">무기를 판매하세요 (판매가: 가치의 58%)</p>
+                    <div id="shop-sell-list"></div>
+                </div>
+
+                <!-- 스킵 버튼 -->
+                <button id="shop-skip-btn" class="shop-skip-btn">상점 나가기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript 파일들 -->
     <script src="src/js/config.js"></script>
     <script src="src/js/Weapon.js"></script>
