@@ -158,66 +158,226 @@ const CONFIG = {
         skillCountChances: [0.65, 0.25, 0.09, 0.01], // 1개, 2개, 3개, 4개
     },
 
-    // 무기 스킬 목록
+    // 무기 스킬 목록 (44개: 각 스킬 × 4등급)
     weaponSkills: {
-        // 화염 - 3초간 매초 2대미지 화상
-        flame: {
-            name: '화염',
+        // 화염 시리즈 - 화상 DoT
+        'flame_1': {
+            name: '화염 I',
+            burnDamage: 1,
+            burnDuration: 2,
+        },
+        'flame_2': {
+            name: '화염 II',
+            burnDamage: 1,
+            burnDuration: 3,
+        },
+        'flame_3': {
+            name: '화염 III',
+            burnDamage: 2,
+            burnDuration: 2,
+        },
+        'flame_4': {
+            name: '화염 IV',
             burnDamage: 2,
             burnDuration: 3,
         },
-        // 맹독 - 5초간 매초 1대미지 중독
-        poison: {
-            name: '맹독',
+
+        // 맹독 시리즈 - 중독 DoT
+        'poison_1': {
+            name: '맹독 I',
+            poisonDamage: 1,
+            poisonDuration: 3,
+        },
+        'poison_2': {
+            name: '맹독 II',
+            poisonDamage: 1,
+            poisonDuration: 4,
+        },
+        'poison_3': {
+            name: '맹독 III',
             poisonDamage: 1,
             poisonDuration: 5,
         },
-        // 신속 - 공격속도 +100%
-        swift: {
-            name: '신속',
+        'poison_4': {
+            name: '맹독 IV',
+            poisonDamage: 2,
+            poisonDuration: 5,
+        },
+
+        // 신속 시리즈 - 공격속도 증가
+        'swift_1': {
+            name: '신속 I',
+            attackSpeedBonus: 0.4,
+        },
+        'swift_2': {
+            name: '신속 II',
+            attackSpeedBonus: 0.6,
+        },
+        'swift_3': {
+            name: '신속 III',
+            attackSpeedBonus: 0.8,
+        },
+        'swift_4': {
+            name: '신속 IV',
             attackSpeedBonus: 1.0,
         },
-        // 행운 - 스킬 발동 확률 +25%
-        lucky: {
-            name: '행운',
+
+        // 행운 시리즈 - 스킬 발동 확률 증가
+        'lucky_1': {
+            name: '행운 I',
+            procChanceBonus: 0.1,
+        },
+        'lucky_2': {
+            name: '행운 II',
+            procChanceBonus: 0.15,
+        },
+        'lucky_3': {
+            name: '행운 III',
+            procChanceBonus: 0.2,
+        },
+        'lucky_4': {
+            name: '행운 IV',
             procChanceBonus: 0.25,
         },
-        // 처형 - 체력 10% 이하 처치, 보스 5% 이하
-        execute: {
-            name: '처형',
+
+        // 처형 시리즈 - 낮은 체력 즉시 처치
+        'execute_1': {
+            name: '처형 I',
+            normalThreshold: 0.04,
+            bossThreshold: 0.02,
+        },
+        'execute_2': {
+            name: '처형 II',
+            normalThreshold: 0.06,
+            bossThreshold: 0.03,
+        },
+        'execute_3': {
+            name: '처형 III',
+            normalThreshold: 0.08,
+            bossThreshold: 0.04,
+        },
+        'execute_4': {
+            name: '처형 IV',
             normalThreshold: 0.1,
             bossThreshold: 0.05,
         },
-        // 흡수 - 공격 시 내구도 회복
-        absorb: {
-            name: '흡수',
+
+        // 흡수 시리즈 - 내구도 회복
+        'absorb_1': {
+            name: '흡수 I',
             durabilityRecovery: 1,
         },
-        // 거인 학살자 - 보스 대미지 +15%
-        giantSlayer: {
-            name: '거인 학살자',
+        'absorb_2': {
+            name: '흡수 II',
+            durabilityRecovery: 2,
+        },
+        'absorb_3': {
+            name: '흡수 III',
+            durabilityRecovery: 3,
+        },
+        'absorb_4': {
+            name: '흡수 IV',
+            durabilityRecovery: 4,
+        },
+
+        // 거인 학살자 시리즈 - 보스 대미지 증가
+        'giantSlayer_1': {
+            name: '거인 학살자 I',
+            bossDamageBonus: 0.06,
+        },
+        'giantSlayer_2': {
+            name: '거인 학살자 II',
+            bossDamageBonus: 0.09,
+        },
+        'giantSlayer_3': {
+            name: '거인 학살자 III',
+            bossDamageBonus: 0.12,
+        },
+        'giantSlayer_4': {
+            name: '거인 학살자 IV',
             bossDamageBonus: 0.15,
         },
-        // 어둠의 장막 - 첫 공격 250% 대미지
-        darkness: {
-            name: '어둠의 장막',
+
+        // 어둠의 장막 시리즈 - 첫 공격 배율
+        'darkness_1': {
+            name: '어둠의 장막 I',
+            firstAttackMultiplier: 1.6,
+        },
+        'darkness_2': {
+            name: '어둠의 장막 II',
+            firstAttackMultiplier: 1.9,
+        },
+        'darkness_3': {
+            name: '어둠의 장막 III',
+            firstAttackMultiplier: 2.2,
+        },
+        'darkness_4': {
+            name: '어둠의 장막 IV',
             firstAttackMultiplier: 2.5,
         },
-        // 양손잡이 - 공격속도 -25%, 대미지 2배
-        twoHanded: {
-            name: '양손잡이',
+
+        // 양손잡이 시리즈 - 공격속도 감소, 대미지 증가
+        'twoHanded_1': {
+            name: '양손잡이 I',
+            attackSpeedPenalty: 0.25,
+            damageMultiplier: 1.4,
+        },
+        'twoHanded_2': {
+            name: '양손잡이 II',
+            attackSpeedPenalty: 0.25,
+            damageMultiplier: 1.6,
+        },
+        'twoHanded_3': {
+            name: '양손잡이 III',
+            attackSpeedPenalty: 0.25,
+            damageMultiplier: 1.8,
+        },
+        'twoHanded_4': {
+            name: '양손잡이 IV',
             attackSpeedPenalty: 0.25,
             damageMultiplier: 2.0,
         },
-        // 이도류 - 대미지 -25%, 2회 공격
-        dualWield: {
-            name: '이도류',
+
+        // 이도류 시리즈 - 다중 공격
+        'dualWield_1': {
+            name: '이도류 I',
             damagePenalty: 0.25,
             attackCount: 2,
         },
-        // 황금향 - 공격 시 10% 확률로 골드 획득
-        golden: {
-            name: '황금향',
+        'dualWield_2': {
+            name: '이도류 II',
+            damagePenalty: 0.2,
+            attackCount: 2,
+        },
+        'dualWield_3': {
+            name: '이도류 III',
+            damagePenalty: 0.15,
+            attackCount: 2,
+        },
+        'dualWield_4': {
+            name: '이도류 IV',
+            damagePenalty: 0.1,
+            attackCount: 2,
+        },
+
+        // 황금향 시리즈 - 골드 획득
+        'golden_1': {
+            name: '황금향 I',
+            goldChance: 0.1,
+            goldAmount: 2,
+        },
+        'golden_2': {
+            name: '황금향 II',
+            goldChance: 0.1,
+            goldAmount: 3,
+        },
+        'golden_3': {
+            name: '황금향 III',
+            goldChance: 0.1,
+            goldAmount: 4,
+        },
+        'golden_4': {
+            name: '황금향 IV',
             goldChance: 0.1,
             goldAmount: 5,
         },

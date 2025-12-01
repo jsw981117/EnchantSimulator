@@ -276,4 +276,16 @@ function setupEventListeners() {
             }
         }
     });
+
+    // 스페이스바로 몹 공격
+    document.addEventListener('keydown', (e) => {
+        // 모달이 열려있으면 무시
+        const modals = document.querySelectorAll('.modal');
+        const isModalOpen = Array.from(modals).some(modal => modal.style.display === 'flex');
+
+        if (e.code === 'Space' && !isModalOpen) {
+            e.preventDefault(); // 스크롤 방지
+            game.attackMob();
+        }
+    });
 }

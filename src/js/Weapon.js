@@ -131,11 +131,13 @@ class Weapon {
         speed *= (1 + this.enhanceLevel * CONFIG.weapon.attackSpeedPerEnhance);
 
         // 인챈트 효과 적용
-        if (this.hasEnchantment('swift')) {
-            speed *= (1 + CONFIG.weaponSkills.swift.attackSpeedBonus);
+        const swiftSkill = this.getEnchantmentByType('swift');
+        if (swiftSkill) {
+            speed *= (1 + CONFIG.weaponSkills[swiftSkill].attackSpeedBonus);
         }
-        if (this.hasEnchantment('twoHanded')) {
-            speed *= (1 - CONFIG.weaponSkills.twoHanded.attackSpeedPenalty);
+        const twoHandedSkill = this.getEnchantmentByType('twoHanded');
+        if (twoHandedSkill) {
+            speed *= (1 - CONFIG.weaponSkills[twoHandedSkill].attackSpeedPenalty);
         }
 
         return speed;
@@ -164,6 +166,11 @@ class Weapon {
         return this.enchantments.includes(skillKey);
     }
 
+    // 특정 타입의 인챈트 찾기 (스킬 시리즈 중 하나라도 있으면 반환)
+    getEnchantmentByType(skillType) {
+        return this.enchantments.find(key => key.startsWith(skillType + '_'));
+    }
+
     // 무기 이름
     getName() {
         let name = this.weaponType.name;
@@ -171,8 +178,8 @@ class Weapon {
         if (this.enhanceLevel > 0) {
             name = `+${this.enhanceLevel} ${name}`;
 
-            // 강화 등급 표시
-            if (this.enhanceGrade) {
+            // 강화 등급 표시 (일반 등급은 표시 안 함)
+            if (this.enhanceGrade && this.enhanceGrade !== 'normal') {
                 const gradeName = CONFIG.enhanceGrades[this.enhanceGrade].name;
                 name = `[${gradeName}] ${name}`;
             }

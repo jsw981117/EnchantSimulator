@@ -115,6 +115,41 @@ class UI {
         this.elements.inventoryModal.style.display = 'none';
     }
 
+    // 무기 타입별 이모티콘 매핑
+    getWeaponEmoji(weaponTypeName) {
+        const emojiMap = {
+            '검': '⚔️',
+            '도끼': '🪓',
+            '창': '🔱',
+            '단검': '🗡️',
+            '둔기': '🔨'
+        };
+        return emojiMap[weaponTypeName] || '⚔️';
+    }
+
+    // 무기 이미지/아이콘 가져오기
+    getWeaponIcon(weapon) {
+        const weaponName = weapon.weaponType.name;
+        const imagePath = `assets/weapons/${weaponName}.png`;
+
+        // 이미지 엘리먼트 생성
+        const img = document.createElement('img');
+        img.className = 'weapon-icon';
+        img.alt = weaponName;
+
+        // 이미지 로드 시도
+        img.src = imagePath;
+        img.onerror = () => {
+            // 이미지 로드 실패 시 이모티콘으로 대체
+            const emoji = this.getWeaponEmoji(weaponName);
+            img.style.display = 'none';
+            img.parentElement.querySelector('.weapon-emoji').textContent = emoji;
+            img.parentElement.querySelector('.weapon-emoji').style.display = 'block';
+        };
+
+        return img;
+    }
+
     // 인벤토리 목록 업데이트
     updateInventoryList() {
         this.elements.inventoryList.innerHTML = '';
@@ -126,23 +161,34 @@ class UI {
 
         game.inventory.forEach(weapon => {
             const itemDiv = document.createElement('div');
-            itemDiv.className = 'inventory-item';
+            itemDiv.className = 'inventory-item-grid';
             if (game.equippedWeapon === weapon) {
                 itemDiv.classList.add('equipped');
             }
             itemDiv.style.cursor = 'pointer';
             itemDiv.dataset.weaponId = weapon.id;
 
+            // 강화 레벨 표시
+            const enhanceLevel = weapon.enhanceLevel > 0 ? `+${weapon.enhanceLevel}` : '';
+            const gradeClass = weapon.enhanceGrade ? `grade-${weapon.enhanceGrade}` : '';
+
             itemDiv.innerHTML = `
-                <div class="weapon-info">
-                    <div class="weapon-name">${weapon.getName()}</div>
-                    <div class="weapon-stats">
-                        공격력: ${weapon.attack} |
-                        내구도: ${weapon.currentDurability}/${weapon.maxDurability} |
-                        판매가: ${weapon.getSellPrice()}G
-                    </div>
+                <div class="weapon-icon-container ${gradeClass}">
+                    <span class="weapon-emoji">${this.getWeaponEmoji(weapon.weaponType.name)}</span>
+                    ${enhanceLevel ? `<div class="weapon-enhance-badge">${enhanceLevel}</div>` : ''}
                 </div>
+                <div class="weapon-item-name">${weapon.getName()}</div>
             `;
+
+            // 이미지 로드 시도 (나중에 assets 폴더에 이미지 추가 시 사용)
+            const img = new Image();
+            img.src = `assets/weapons/${weapon.weaponType.name}.png`;
+            img.className = 'weapon-icon';
+            img.onload = () => {
+                const iconContainer = itemDiv.querySelector('.weapon-icon-container');
+                iconContainer.querySelector('.weapon-emoji').style.display = 'none';
+                iconContainer.insertBefore(img, iconContainer.firstChild);
+            };
 
             this.elements.inventoryList.appendChild(itemDiv);
         });
@@ -154,7 +200,7 @@ class UI {
     // 인벤토리 이벤트 리스너
     attachInventoryEventListeners() {
         // 아이템 클릭 시 상세 모달 열기
-        document.querySelectorAll('.inventory-item').forEach(itemDiv => {
+        document.querySelectorAll('.inventory-item-grid').forEach(itemDiv => {
             itemDiv.addEventListener('click', (e) => {
                 const weaponId = parseFloat(itemDiv.dataset.weaponId);
                 const weapon = game.inventory.find(w => w.id === weaponId);
