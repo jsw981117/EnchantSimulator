@@ -401,11 +401,15 @@ class UI {
 
         // 이벤트 리스너
         document.querySelectorAll('.sell-weapon-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 const weaponId = parseFloat(e.target.dataset.weaponId);
                 const weapon = game.inventory.find(w => w.id === weaponId);
 
-                if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+                const confirmed = await this.showConfirm(
+                    `${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`,
+                    '무기 판매'
+                );
+                if (confirmed) {
                     const weaponName = weapon.getName();
                     const sellPrice = weapon.getSellPrice();
                     game.sellWeapon(weapon);
@@ -463,6 +467,7 @@ class UI {
         document.getElementById('basic-settings').style.display = tabName === 'basic' ? 'block' : 'none';
         document.getElementById('enhance-settings').style.display = tabName === 'enhance' ? 'block' : 'none';
         document.getElementById('skills-settings').style.display = tabName === 'skills' ? 'block' : 'none';
+        document.getElementById('weapons-settings').style.display = tabName === 'weapons' ? 'block' : 'none';
     }
 
     // CONFIG 값을 폼에 로드
@@ -600,8 +605,12 @@ class UI {
     }
 
     // 설정 초기화
-    resetSettings() {
-        if (!confirm('모든 설정을 기본값으로 초기화하시겠습니까?')) {
+    async resetSettings() {
+        const confirmed = await this.showConfirm(
+            '모든 설정을 기본값으로 초기화하시겠습니까?',
+            '설정 초기화'
+        );
+        if (!confirmed) {
             return;
         }
 
@@ -799,5 +808,48 @@ class UI {
 
         // 모달 닫기
         this.closeEnchantModal();
+    }
+
+    // 확인 모달 표시 (Promise 반환)
+    showConfirm(message, title = '확인') {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('confirm-modal');
+            const titleEl = document.getElementById('confirm-title');
+            const messageEl = document.getElementById('confirm-message');
+            const okBtn = document.getElementById('confirm-ok-btn');
+            const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // 이전 이벤트 리스너 제거를 위해 새 버튼으로 교체
+            const newOkBtn = okBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            // 새 이벤트 리스너 추가
+            newOkBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                resolve(true);
+            });
+
+            newCancelBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                resolve(false);
+            });
+
+            // 배경 클릭 시 취소
+            const backgroundClickHandler = (e) => {
+                if (e.target.id === 'confirm-modal') {
+                    modal.style.display = 'none';
+                    modal.removeEventListener('click', backgroundClickHandler);
+                    resolve(false);
+                }
+            };
+            modal.addEventListener('click', backgroundClickHandler);
+
+            modal.style.display = 'flex';
+        });
     }
 }

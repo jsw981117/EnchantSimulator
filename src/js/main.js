@@ -67,12 +67,18 @@ function setupEventListeners() {
     });
 
     // 장착 무기 판매 버튼
-    document.getElementById('equipped-sell-btn').addEventListener('click', () => {
-        if (game.equippedWeapon && confirm(`${game.equippedWeapon.getName()}을(를) ${game.equippedWeapon.getSellPrice()}G에 판매하시겠습니까?`)) {
-            const weaponName = game.equippedWeapon.getName();
-            const sellPrice = game.equippedWeapon.getSellPrice();
-            game.sellWeapon(game.equippedWeapon);
-            ui.showToast(`${weaponName}을(를) ${sellPrice}G에 판매했습니다!`, 'success');
+    document.getElementById('equipped-sell-btn').addEventListener('click', async () => {
+        if (game.equippedWeapon) {
+            const confirmed = await ui.showConfirm(
+                `${game.equippedWeapon.getName()}을(를) ${game.equippedWeapon.getSellPrice()}G에 판매하시겠습니까?`,
+                '무기 판매'
+            );
+            if (confirmed) {
+                const weaponName = game.equippedWeapon.getName();
+                const sellPrice = game.equippedWeapon.getSellPrice();
+                game.sellWeapon(game.equippedWeapon);
+                ui.showToast(`${weaponName}을(를) ${sellPrice}G에 판매했습니다!`, 'success');
+            }
         }
     });
 
@@ -122,11 +128,15 @@ function setupEventListeners() {
     });
 
     // 무기 상세 - 판매 버튼
-    document.getElementById('detail-sell-btn').addEventListener('click', () => {
+    document.getElementById('detail-sell-btn').addEventListener('click', async () => {
         const weapon = ui.selectedWeaponForDetail;
         if (!weapon) return;
 
-        if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+        const confirmed = await ui.showConfirm(
+            `${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`,
+            '무기 판매'
+        );
+        if (confirmed) {
             const weaponName = weapon.getName();
             const sellPrice = weapon.getSellPrice();
             game.sellWeapon(weapon);
@@ -248,17 +258,20 @@ function setupEventListeners() {
     });
 
     // 무기 타입 삭제 버튼 (이벤트 위임)
-    document.getElementById('weapon-types-list').addEventListener('click', (e) => {
+    document.getElementById('weapon-types-list').addEventListener('click', async (e) => {
         if (e.target.classList.contains('delete-weapon-type-btn')) {
             if (CONFIG.weaponTypes.length <= 1) {
-                alert('최소 1개의 무기 타입은 필요합니다!');
+                ui.showToast('최소 1개의 무기 타입은 필요합니다!', 'error');
                 return;
             }
 
-            const index = parseInt(e.target.dataset.index);
             const item = e.target.closest('.weapon-type-item');
 
-            if (confirm('이 무기 타입을 삭제하시겠습니까?')) {
+            const confirmed = await ui.showConfirm(
+                '이 무기 타입을 삭제하시겠습니까?',
+                '무기 타입 삭제'
+            );
+            if (confirmed) {
                 item.remove();
             }
         }

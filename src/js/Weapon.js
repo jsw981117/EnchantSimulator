@@ -55,7 +55,7 @@ class Weapon {
 
     // 무기 가치 계산 (판매/구매 가격 기준)
     calculateValue() {
-        const baseValue = 100;
+        const baseValue = 20;
         let value = baseValue * Math.pow(1.5, this.enhanceLevel);
 
         // 강화 등급에 따른 가치 증가

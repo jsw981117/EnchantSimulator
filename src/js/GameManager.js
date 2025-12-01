@@ -115,8 +115,9 @@ class GameManager {
     onMobKilled() {
         const killedMob = this.currentMob;
 
-        // 골드 드랍
-        this.addGold(CONFIG.mob.goldDrop);
+        // 골드 드랍 (스테이지에 따라 증가)
+        const goldAmount = Math.floor(CONFIG.mob.goldDrop * Math.pow(CONFIG.mob.goldGrowth, this.stage - 1));
+        this.addGold(goldAmount);
 
         // 강화석 드랍 확률
         if (Math.random() < CONFIG.drop.enhanceStoneChance) {

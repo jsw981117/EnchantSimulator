@@ -4,7 +4,8 @@ const CONFIG = {
     mob: {
         baseHP: 50,              // 기본 몹 체력
         hpGrowth: 1.5,           // 스테이지당 체력 증가율
-        goldDrop: 10,            // 몹 처치 시 골드 드랍
+        goldDrop: 10,            // 몹 처치 시 기본 골드 드랍
+        goldGrowth: 1.2,         // 스테이지당 골드 증가율 (20%)
         mobsPerStage: 10,        // 스테이지당 몹 수
     },
 
@@ -76,7 +77,7 @@ const CONFIG = {
         baseSuccessRate: 0.8,    // 기본 성공 확률 (80%)
         successRateDecay: 0.05,  // 강화 수치당 확률 감소
         stoneBonus: 0.1,         // 강화석 1개당 확률 증가 (10%)
-        costBase: 100,           // 기본 강화 비용
+        costBase: 20,            // 기본 강화 비용
         costGrowth: 1.5,         // 강화 수치당 비용 증가율
         attackIncrease: 5,       // 강화 성공 시 공격력 증가
         durabilityIncrease: 10,  // 강화 성공 시 내구도 증가

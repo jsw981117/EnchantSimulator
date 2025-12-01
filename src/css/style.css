@@ -896,3 +896,65 @@ button:active {
 .weapon-type-item .setting-row input[type="number"] {
     width: 150px;
 }
+
+/* 확인 모달 */
+.confirm-modal-content {
+    max-width: 400px;
+}
+
+.confirm-modal-content .modal-header {
+    background-color: #2a4a5a;
+    border-bottom: 2px solid #3a6a7a;
+}
+
+.confirm-modal-content .modal-body {
+    padding: 30px;
+    text-align: center;
+}
+
+.confirm-modal-content .modal-body p {
+    font-size: 1.1rem;
+    color: #ffffff;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    border-top: 2px solid #3a3a3a;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 2px solid;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.cancel-btn {
+    background-color: #4a4a4a;
+    border-color: #6a6a6a;
+    color: #ffffff;
+}
+
+.cancel-btn:hover {
+    background-color: #5a5a5a;
+    border-color: #7a7a7a;
+}
+
+.ok-btn {
+    background-color: #2a5a5a;
+    border-color: #3a7a7a;
+    color: #ffffff;
+}
+
+.ok-btn:hover {
+    background-color: #3a6a6a;
+    border-color: #4a8a8a;
+}
