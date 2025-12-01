@@ -390,4 +390,188 @@ class UI {
         btn.textContent = game.autoAttackEnabled ? '자동 공격: ON' : '자동 공격: OFF';
         btn.style.backgroundColor = game.autoAttackEnabled ? '#2a5a2a' : '';
     }
+
+    // 설정 모달 열기
+    openSettings() {
+        this.loadSettingsToForm();
+        document.getElementById('settings-modal').style.display = 'flex';
+    }
+
+    // 설정 모달 닫기
+    closeSettings() {
+        document.getElementById('settings-modal').style.display = 'none';
+    }
+
+    // 설정 탭 전환
+    switchSettingsTab(tabName) {
+        // 탭 버튼 업데이트
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.tab === tabName) {
+                tab.classList.add('active');
+            }
+        });
+
+        // 패널 표시 전환
+        document.getElementById('basic-settings').style.display = tabName === 'basic' ? 'block' : 'none';
+        document.getElementById('enhance-settings').style.display = tabName === 'enhance' ? 'block' : 'none';
+        document.getElementById('skills-settings').style.display = tabName === 'skills' ? 'block' : 'none';
+    }
+
+    // CONFIG 값을 폼에 로드
+    loadSettingsToForm() {
+        // 기본 설정
+        document.getElementById('mob-baseHP').value = CONFIG.mob.baseHP;
+        document.getElementById('mob-hpGrowth').value = CONFIG.mob.hpGrowth;
+        document.getElementById('mob-goldDrop').value = CONFIG.mob.goldDrop;
+        document.getElementById('mob-mobsPerStage').value = CONFIG.mob.mobsPerStage;
+
+        document.getElementById('boss-hpMultiplier').value = CONFIG.boss.hpMultiplier;
+
+        document.getElementById('drop-enhanceStoneChance').value = CONFIG.drop.enhanceStoneChance;
+        document.getElementById('drop-weaponChance').value = CONFIG.drop.weaponChance;
+
+        document.getElementById('shop-appearChance').value = CONFIG.shop.appearChance;
+        document.getElementById('shop-sellRatio').value = CONFIG.shop.sellRatio;
+        document.getElementById('shop-itemSlots').value = CONFIG.shop.itemSlots;
+
+        // 강화/무기 설정
+        document.getElementById('enhance-baseSuccessRate').value = CONFIG.enhance.baseSuccessRate;
+        document.getElementById('enhance-successRateDecay').value = CONFIG.enhance.successRateDecay;
+        document.getElementById('enhance-stoneBonus').value = CONFIG.enhance.stoneBonus;
+        document.getElementById('enhance-costBase').value = CONFIG.enhance.costBase;
+        document.getElementById('enhance-costGrowth').value = CONFIG.enhance.costGrowth;
+        document.getElementById('enhance-attackIncrease').value = CONFIG.enhance.attackIncrease;
+        document.getElementById('enhance-durabilityIncrease').value = CONFIG.enhance.durabilityIncrease;
+        document.getElementById('enhance-durabilityDecrease').value = CONFIG.enhance.durabilityDecrease;
+
+        document.getElementById('weapon-attackDurabilityChance').value = CONFIG.weapon.attackDurabilityChance;
+        document.getElementById('weapon-baseDurability').value = CONFIG.weapon.baseDurability;
+        document.getElementById('weapon-baseAttack').value = CONFIG.weapon.baseAttack;
+        document.getElementById('weapon-baseAttackSpeed').value = CONFIG.weapon.baseAttackSpeed;
+        document.getElementById('weapon-attackSpeedPerEnhance').value = CONFIG.weapon.attackSpeedPerEnhance;
+
+        // 스킬 설정
+        document.getElementById('mobSkills-normalMobChance').value = CONFIG.mobSkills.normalMobChance;
+        document.getElementById('mobSkills-bossMobChance').value = CONFIG.mobSkills.bossMobChance;
+
+        document.getElementById('giant-normalHPBonus').value = CONFIG.mobSkills.giant.normalHPBonus;
+        document.getElementById('giant-bossHPBonus').value = CONFIG.mobSkills.giant.bossHPBonus;
+
+        document.getElementById('corrosion-durabilityMultiplier').value = CONFIG.mobSkills.corrosion.durabilityMultiplier;
+
+        document.getElementById('golden-minGold').value = CONFIG.mobSkills.golden.minGold;
+        document.getElementById('golden-maxGold').value = CONFIG.mobSkills.golden.maxGold;
+        document.getElementById('golden-stageMultiplier').value = CONFIG.mobSkills.golden.stageMultiplier;
+
+        document.getElementById('chaos-minEnhanceLevel').value = CONFIG.mobSkills.chaos.minEnhanceLevel;
+        document.getElementById('chaos-maxEnhanceLevel').value = CONFIG.mobSkills.chaos.maxEnhanceLevel;
+
+        document.getElementById('frozen-attackSpeedMultiplier').value = CONFIG.mobSkills.frozen.attackSpeedMultiplier;
+
+        document.getElementById('explosive-durabilityLossRatio').value = CONFIG.mobSkills.explosive.durabilityLossRatio;
+
+        document.getElementById('crystal-minStones').value = CONFIG.mobSkills.crystal.minStones;
+        document.getElementById('crystal-maxStones').value = CONFIG.mobSkills.crystal.maxStones;
+
+        document.getElementById('whetstone-minHealRatio').value = CONFIG.mobSkills.whetstone.minHealRatio;
+        document.getElementById('whetstone-maxHealRatio').value = CONFIG.mobSkills.whetstone.maxHealRatio;
+    }
+
+    // 설정 적용
+    applySettings() {
+        // 기본 설정
+        CONFIG.mob.baseHP = parseFloat(document.getElementById('mob-baseHP').value);
+        CONFIG.mob.hpGrowth = parseFloat(document.getElementById('mob-hpGrowth').value);
+        CONFIG.mob.goldDrop = parseFloat(document.getElementById('mob-goldDrop').value);
+        CONFIG.mob.mobsPerStage = parseInt(document.getElementById('mob-mobsPerStage').value);
+
+        CONFIG.boss.hpMultiplier = parseFloat(document.getElementById('boss-hpMultiplier').value);
+
+        CONFIG.drop.enhanceStoneChance = parseFloat(document.getElementById('drop-enhanceStoneChance').value);
+        CONFIG.drop.weaponChance = parseFloat(document.getElementById('drop-weaponChance').value);
+
+        CONFIG.shop.appearChance = parseFloat(document.getElementById('shop-appearChance').value);
+        CONFIG.shop.sellRatio = parseFloat(document.getElementById('shop-sellRatio').value);
+        CONFIG.shop.itemSlots = parseInt(document.getElementById('shop-itemSlots').value);
+
+        // 강화/무기 설정
+        CONFIG.enhance.baseSuccessRate = parseFloat(document.getElementById('enhance-baseSuccessRate').value);
+        CONFIG.enhance.successRateDecay = parseFloat(document.getElementById('enhance-successRateDecay').value);
+        CONFIG.enhance.stoneBonus = parseFloat(document.getElementById('enhance-stoneBonus').value);
+        CONFIG.enhance.costBase = parseFloat(document.getElementById('enhance-costBase').value);
+        CONFIG.enhance.costGrowth = parseFloat(document.getElementById('enhance-costGrowth').value);
+        CONFIG.enhance.attackIncrease = parseFloat(document.getElementById('enhance-attackIncrease').value);
+        CONFIG.enhance.durabilityIncrease = parseFloat(document.getElementById('enhance-durabilityIncrease').value);
+        CONFIG.enhance.durabilityDecrease = parseFloat(document.getElementById('enhance-durabilityDecrease').value);
+
+        CONFIG.weapon.attackDurabilityChance = parseFloat(document.getElementById('weapon-attackDurabilityChance').value);
+        CONFIG.weapon.baseDurability = parseFloat(document.getElementById('weapon-baseDurability').value);
+        CONFIG.weapon.baseAttack = parseFloat(document.getElementById('weapon-baseAttack').value);
+        CONFIG.weapon.baseAttackSpeed = parseFloat(document.getElementById('weapon-baseAttackSpeed').value);
+        CONFIG.weapon.attackSpeedPerEnhance = parseFloat(document.getElementById('weapon-attackSpeedPerEnhance').value);
+
+        // 스킬 설정
+        CONFIG.mobSkills.normalMobChance = parseFloat(document.getElementById('mobSkills-normalMobChance').value);
+        CONFIG.mobSkills.bossMobChance = parseFloat(document.getElementById('mobSkills-bossMobChance').value);
+
+        CONFIG.mobSkills.giant.normalHPBonus = parseFloat(document.getElementById('giant-normalHPBonus').value);
+        CONFIG.mobSkills.giant.bossHPBonus = parseFloat(document.getElementById('giant-bossHPBonus').value);
+
+        CONFIG.mobSkills.corrosion.durabilityMultiplier = parseFloat(document.getElementById('corrosion-durabilityMultiplier').value);
+
+        CONFIG.mobSkills.golden.minGold = parseFloat(document.getElementById('golden-minGold').value);
+        CONFIG.mobSkills.golden.maxGold = parseFloat(document.getElementById('golden-maxGold').value);
+        CONFIG.mobSkills.golden.stageMultiplier = parseFloat(document.getElementById('golden-stageMultiplier').value);
+
+        CONFIG.mobSkills.chaos.minEnhanceLevel = parseInt(document.getElementById('chaos-minEnhanceLevel').value);
+        CONFIG.mobSkills.chaos.maxEnhanceLevel = parseInt(document.getElementById('chaos-maxEnhanceLevel').value);
+
+        CONFIG.mobSkills.frozen.attackSpeedMultiplier = parseFloat(document.getElementById('frozen-attackSpeedMultiplier').value);
+
+        CONFIG.mobSkills.explosive.durabilityLossRatio = parseFloat(document.getElementById('explosive-durabilityLossRatio').value);
+
+        CONFIG.mobSkills.crystal.minStones = parseInt(document.getElementById('crystal-minStones').value);
+        CONFIG.mobSkills.crystal.maxStones = parseInt(document.getElementById('crystal-maxStones').value);
+
+        CONFIG.mobSkills.whetstone.minHealRatio = parseFloat(document.getElementById('whetstone-minHealRatio').value);
+        CONFIG.mobSkills.whetstone.maxHealRatio = parseFloat(document.getElementById('whetstone-maxHealRatio').value);
+
+        // localStorage에 저장
+        localStorage.setItem('enchantSimulatorConfig', JSON.stringify(CONFIG));
+
+        this.showToast('설정이 적용되었습니다!', 'success');
+        this.closeSettings();
+    }
+
+    // 설정 초기화
+    resetSettings() {
+        if (!confirm('모든 설정을 기본값으로 초기화하시겠습니까?')) {
+            return;
+        }
+
+        // CONFIG를 DEFAULT_CONFIG로 복원
+        Object.assign(CONFIG, JSON.parse(JSON.stringify(DEFAULT_CONFIG)));
+
+        // localStorage 삭제
+        localStorage.removeItem('enchantSimulatorConfig');
+
+        // 폼 업데이트
+        this.loadSettingsToForm();
+
+        this.showToast('설정이 초기화되었습니다!', 'success');
+    }
+
+    // 저장된 설정 로드 (게임 시작 시)
+    loadSavedSettings() {
+        const savedConfig = localStorage.getItem('enchantSimulatorConfig');
+        if (savedConfig) {
+            try {
+                const parsed = JSON.parse(savedConfig);
+                Object.assign(CONFIG, parsed);
+            } catch (e) {
+                console.error('설정 로드 실패:', e);
+            }
+        }
+    }
 }

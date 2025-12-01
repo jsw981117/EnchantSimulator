@@ -10,6 +10,9 @@ window.addEventListener('DOMContentLoaded', () => {
     ui = new UI();
     ui.init();
 
+    // 저장된 설정 로드
+    ui.loadSavedSettings();
+
     // 게임 매니저 초기화
     game = new GameManager();
 
@@ -163,5 +166,39 @@ function setupEventListeners() {
 
     document.getElementById('sell-tab').addEventListener('click', () => {
         ui.switchShopTab('sell');
+    });
+
+    // 설정 버튼
+    document.getElementById('settings-btn').addEventListener('click', () => {
+        ui.openSettings();
+    });
+
+    // 설정 모달 닫기
+    document.getElementById('close-settings').addEventListener('click', () => {
+        ui.closeSettings();
+    });
+
+    // 설정 모달 배경 클릭 시 닫기
+    document.getElementById('settings-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'settings-modal') {
+            ui.closeSettings();
+        }
+    });
+
+    // 설정 탭 버튼
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            ui.switchSettingsTab(tab.dataset.tab);
+        });
+    });
+
+    // 설정 적용 버튼
+    document.getElementById('apply-settings-btn').addEventListener('click', () => {
+        ui.applySettings();
+    });
+
+    // 설정 초기화 버튼
+    document.getElementById('reset-settings-btn').addEventListener('click', () => {
+        ui.resetSettings();
     });
 }

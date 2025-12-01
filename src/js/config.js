@@ -107,3 +107,6 @@ const CONFIG = {
         baseAttack: 1,           // 무기 없을 때 공격력
     }
 };
+
+// 기본값 복사본 (초기화용)
+const DEFAULT_CONFIG = JSON.parse(JSON.stringify(CONFIG));

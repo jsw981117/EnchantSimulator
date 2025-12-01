@@ -49,6 +49,7 @@
         <div class="button-area">
             <button id="auto-attack-btn">자동 공격: OFF</button>
             <button id="inventory-btn">인벤토리</button>
+            <button id="settings-btn">⚙️ 설정</button>
         </div>
     </div>
 
@@ -180,6 +181,255 @@
 
                 <!-- 스킵 버튼 -->
                 <button id="shop-skip-btn" class="shop-skip-btn">상점 나가기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 설정 모달 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 게임 설정</h2>
+                <button class="close-btn" id="close-settings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 탭 버튼 -->
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="basic">기본</button>
+                    <button class="settings-tab" data-tab="enhance">강화/무기</button>
+                    <button class="settings-tab" data-tab="skills">스킬</button>
+                </div>
+
+                <!-- 기본 설정 탭 -->
+                <div id="basic-settings" class="settings-panel">
+                    <div class="settings-section">
+                        <h3>몹 설정</h3>
+                        <div class="setting-row">
+                            <label>기본 체력:</label>
+                            <input type="number" id="mob-baseHP" min="1" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>스테이지당 체력 증가율:</label>
+                            <input type="number" id="mob-hpGrowth" min="1" step="0.1">
+                        </div>
+                        <div class="setting-row">
+                            <label>골드 드랍:</label>
+                            <input type="number" id="mob-goldDrop" min="0" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>스테이지당 몹 수:</label>
+                            <input type="number" id="mob-mobsPerStage" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>보스 설정</h3>
+                        <div class="setting-row">
+                            <label>체력 배율:</label>
+                            <input type="number" id="boss-hpMultiplier" min="1" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>드랍 확률</h3>
+                        <div class="setting-row">
+                            <label>강화석 드랍 확률 (0~1):</label>
+                            <input type="number" id="drop-enhanceStoneChance" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>무기 드랍 확률 (0~1):</label>
+                            <input type="number" id="drop-weaponChance" min="0" max="1" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>상점 설정</h3>
+                        <div class="setting-row">
+                            <label>등장 확률 (0~1):</label>
+                            <input type="number" id="shop-appearChance" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>판매가 비율 (0~1):</label>
+                            <input type="number" id="shop-sellRatio" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>아이템 슬롯 수:</label>
+                            <input type="number" id="shop-itemSlots" min="1" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 강화/무기 설정 탭 -->
+                <div id="enhance-settings" class="settings-panel" style="display: none;">
+                    <div class="settings-section">
+                        <h3>강화 설정</h3>
+                        <div class="setting-row">
+                            <label>기본 성공 확률 (0~1):</label>
+                            <input type="number" id="enhance-baseSuccessRate" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화당 확률 감소:</label>
+                            <input type="number" id="enhance-successRateDecay" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화석 1개당 확률 증가:</label>
+                            <input type="number" id="enhance-stoneBonus" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>기본 강화 비용:</label>
+                            <input type="number" id="enhance-costBase" min="0" step="10">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화당 비용 증가율:</label>
+                            <input type="number" id="enhance-costGrowth" min="1" step="0.1">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화 성공 시 공격력 증가:</label>
+                            <input type="number" id="enhance-attackIncrease" min="0" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화 성공 시 내구도 증가:</label>
+                            <input type="number" id="enhance-durabilityIncrease" min="0" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화 실패 시 내구도 감소:</label>
+                            <input type="number" id="enhance-durabilityDecrease" min="0" step="1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>무기 설정</h3>
+                        <div class="setting-row">
+                            <label>공격 시 내구도 감소 확률 (0~1):</label>
+                            <input type="number" id="weapon-attackDurabilityChance" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>기본 내구도:</label>
+                            <input type="number" id="weapon-baseDurability" min="1" step="10">
+                        </div>
+                        <div class="setting-row">
+                            <label>기본 공격력:</label>
+                            <input type="number" id="weapon-baseAttack" min="1" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>기본 공격속도 (/초):</label>
+                            <input type="number" id="weapon-baseAttackSpeed" min="0.1" step="0.1">
+                        </div>
+                        <div class="setting-row">
+                            <label>강화당 공격속도 증가:</label>
+                            <input type="number" id="weapon-attackSpeedPerEnhance" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 스킬 설정 탭 -->
+                <div id="skills-settings" class="settings-panel" style="display: none;">
+                    <div class="settings-section">
+                        <h3>스킬 등장 확률</h3>
+                        <div class="setting-row">
+                            <label>일반 몹 스킬 확률 (0~1):</label>
+                            <input type="number" id="mobSkills-normalMobChance" min="0" max="1" step="0.01">
+                        </div>
+                        <div class="setting-row">
+                            <label>보스 스킬 확률 (0~1):</label>
+                            <input type="number" id="mobSkills-bossMobChance" min="0" max="1" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>거인화</h3>
+                        <div class="setting-row">
+                            <label>일반 몹 HP 보너스 (0~1):</label>
+                            <input type="number" id="giant-normalHPBonus" min="0" step="0.05">
+                        </div>
+                        <div class="setting-row">
+                            <label>보스 HP 보너스 (0~1):</label>
+                            <input type="number" id="giant-bossHPBonus" min="0" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>부식</h3>
+                        <div class="setting-row">
+                            <label>내구도 소모 배율:</label>
+                            <input type="number" id="corrosion-durabilityMultiplier" min="1" step="0.5">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>황금상</h3>
+                        <div class="setting-row">
+                            <label>최소 골드:</label>
+                            <input type="number" id="golden-minGold" min="0" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>최대 골드:</label>
+                            <input type="number" id="golden-maxGold" min="1" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>스테이지당 배율:</label>
+                            <input type="number" id="golden-stageMultiplier" min="1" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>혼돈</h3>
+                        <div class="setting-row">
+                            <label>변환 무기 최소 강화:</label>
+                            <input type="number" id="chaos-minEnhanceLevel" min="0" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>변환 무기 최대 강화:</label>
+                            <input type="number" id="chaos-maxEnhanceLevel" min="0" step="1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>빙결</h3>
+                        <div class="setting-row">
+                            <label>공격속도 배율 (0~1):</label>
+                            <input type="number" id="frozen-attackSpeedMultiplier" min="0" max="1" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>폭발</h3>
+                        <div class="setting-row">
+                            <label>내구도 감소 비율 (0~1):</label>
+                            <input type="number" id="explosive-durabilityLossRatio" min="0" max="1" step="0.05">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>결정화</h3>
+                        <div class="setting-row">
+                            <label>최소 강화석:</label>
+                            <input type="number" id="crystal-minStones" min="1" step="1">
+                        </div>
+                        <div class="setting-row">
+                            <label>최대 강화석:</label>
+                            <input type="number" id="crystal-maxStones" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>숫돌화</h3>
+                        <div class="setting-row">
+                            <label>최소 회복 비율 (0~1):</label>
+                            <input type="number" id="whetstone-minHealRatio" min="0" max="1" step="0.05">
+                        </div>
+                        <div class="setting-row">
+                            <label>최대 회복 비율 (0~1):</label>
+                            <input type="number" id="whetstone-maxHealRatio" min="0" max="1" step="0.05">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="settings-buttons">
+                    <button id="reset-settings-btn" class="settings-btn reset-btn">기본값으로 초기화</button>
+                    <button id="apply-settings-btn" class="settings-btn apply-btn">적용</button>
+                </div>
             </div>
         </div>
     </div>
