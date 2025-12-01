@@ -476,6 +476,7 @@ class UI {
         document.getElementById('mob-baseHP').value = CONFIG.mob.baseHP;
         document.getElementById('mob-hpGrowth').value = CONFIG.mob.hpGrowth;
         document.getElementById('mob-goldDrop').value = CONFIG.mob.goldDrop;
+        document.getElementById('mob-goldGrowth').value = CONFIG.mob.goldGrowth;
         document.getElementById('mob-mobsPerStage').value = CONFIG.mob.mobsPerStage;
 
         document.getElementById('boss-hpMultiplier').value = CONFIG.boss.hpMultiplier;
@@ -539,6 +540,7 @@ class UI {
         CONFIG.mob.baseHP = parseFloat(document.getElementById('mob-baseHP').value);
         CONFIG.mob.hpGrowth = parseFloat(document.getElementById('mob-hpGrowth').value);
         CONFIG.mob.goldDrop = parseFloat(document.getElementById('mob-goldDrop').value);
+        CONFIG.mob.goldGrowth = parseFloat(document.getElementById('mob-goldGrowth').value);
         CONFIG.mob.mobsPerStage = parseInt(document.getElementById('mob-mobsPerStage').value);
 
         CONFIG.boss.hpMultiplier = parseFloat(document.getElementById('boss-hpMultiplier').value);
