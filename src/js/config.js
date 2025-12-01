@@ -158,6 +158,48 @@ const CONFIG = {
         skillCountChances: [0.65, 0.25, 0.09, 0.01], // 1개, 2개, 3개, 4개
     },
 
+    // 스킬 등급 시스템
+    skillGrades: {
+        normal: {
+            name: '일반',
+            chance: 0.65,
+            level: 1, // I 등급 스킬
+        },
+        magic: {
+            name: '마법',
+            chance: 0.25,
+            level: 2, // II 등급 스킬
+        },
+        hero: {
+            name: '영웅',
+            chance: 0.09,
+            level: 3, // III 등급 스킬
+        },
+        legendary: {
+            name: '전설',
+            chance: 0.01,
+            level: 4, // IV 등급 스킬
+        },
+    },
+
+    // 속성 시스템
+    elements: ['화염', '대기', '대지', '빙결', '암흑', '광명'],
+
+    // 무기 속성 관련
+    weaponElement: {
+        chance: 0.3,  // 무기가 속성을 가질 확률 (30%)
+    },
+
+    // 몹 저항/약점 시스템
+    mobResistance: {
+        hasResistanceChance: 0.2,    // 저항을 가질 확률 (20%)
+        hasWeaknessChance: 0.2,      // 약점을 가질 확률 (20%)
+        level1Chance: 0.60,          // + 등급 (60%)
+        level2Chance: 0.30,          // ++ 등급 (30%)
+        level3Chance: 0.10,          // +++ 등급 (10%)
+        damagePerLevel: 0.10,        // 레벨당 대미지 배율 (10%)
+    },
+
     // 무기 스킬 목록 (44개: 각 스킬 × 4등급)
     weaponSkills: {
         // 화염 시리즈 - 화상 DoT

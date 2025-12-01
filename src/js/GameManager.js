@@ -69,7 +69,14 @@ class GameManager {
     attackMob() {
         if (!this.currentMob) return;
 
-        const damage = this.getAttackPower();
+        let damage = this.getAttackPower();
+
+        // 속성 대미지 배율 적용
+        if (this.equippedWeapon && this.equippedWeapon.element) {
+            const elementMultiplier = this.currentMob.getElementDamageMultiplier(this.equippedWeapon.element);
+            damage = Math.floor(damage * elementMultiplier);
+        }
+
         this.currentMob.takeDamage(damage);
 
         // 황금상 스킬: 공격 시 골드 획득

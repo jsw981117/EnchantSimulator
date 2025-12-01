@@ -4,8 +4,48 @@ class Mob {
         this.stage = stage;
         this.isBoss = isBoss;
         this.skill = this.rollSkill();
+        this.resistances = this.rollResistances(); // 저항 목록
+        this.weaknesses = this.rollWeaknesses();   // 약점 목록
         this.maxHP = this.calculateHP();
         this.currentHP = this.maxHP;
+    }
+
+    // 저항 랜덤 선택
+    rollResistances() {
+        const resistances = [];
+        if (Math.random() < CONFIG.mobResistance.hasResistanceChance) {
+            // 랜덤 속성 선택
+            const elementIndex = Math.floor(Math.random() * CONFIG.elements.length);
+            const element = CONFIG.elements[elementIndex];
+
+            // 저항 레벨 결정 (1=+, 2=++, 3=+++)
+            const rand = Math.random();
+            let level = 1;
+            if (rand < CONFIG.mobResistance.level3Chance) level = 3;
+            else if (rand < CONFIG.mobResistance.level3Chance + CONFIG.mobResistance.level2Chance) level = 2;
+
+            resistances.push({ element, level });
+        }
+        return resistances;
+    }
+
+    // 약점 랜덤 선택
+    rollWeaknesses() {
+        const weaknesses = [];
+        if (Math.random() < CONFIG.mobResistance.hasWeaknessChance) {
+            // 랜덤 속성 선택
+            const elementIndex = Math.floor(Math.random() * CONFIG.elements.length);
+            const element = CONFIG.elements[elementIndex];
+
+            // 약점 레벨 결정 (1=+, 2=++, 3=+++)
+            const rand = Math.random();
+            let level = 1;
+            if (rand < CONFIG.mobResistance.level3Chance) level = 3;
+            else if (rand < CONFIG.mobResistance.level3Chance + CONFIG.mobResistance.level2Chance) level = 2;
+
+            weaknesses.push({ element, level });
+        }
+        return weaknesses;
     }
 
     // 스킬 랜덤 선택
@@ -68,5 +108,42 @@ class Mob {
     // HP 퍼센트
     getHPPercent() {
         return (this.currentHP / this.maxHP) * 100;
+    }
+
+    // 속성 대미지 배율 계산 (무기 속성에 따른)
+    getElementDamageMultiplier(weaponElement) {
+        if (!weaponElement) return 1.0;
+
+        let multiplier = 1.0;
+
+        // 저항 확인
+        const resistance = this.resistances.find(r => r.element === weaponElement);
+        if (resistance) {
+            multiplier *= (1 - resistance.level * CONFIG.mobResistance.damagePerLevel);
+        }
+
+        // 약점 확인
+        const weakness = this.weaknesses.find(w => w.element === weaponElement);
+        if (weakness) {
+            multiplier *= (1 + weakness.level * CONFIG.mobResistance.damagePerLevel);
+        }
+
+        return multiplier;
+    }
+
+    // 저항 표시 텍스트
+    getResistanceText() {
+        if (this.resistances.length === 0) return '';
+        const resistance = this.resistances[0];
+        const levelMarks = '+'.repeat(resistance.level);
+        return `${resistance.element} 저항${levelMarks}`;
+    }
+
+    // 약점 표시 텍스트
+    getWeaknessText() {
+        if (this.weaknesses.length === 0) return '';
+        const weakness = this.weaknesses[0];
+        const levelMarks = '+'.repeat(weakness.level);
+        return `${weakness.element} 약점${levelMarks}`;
     }
 }

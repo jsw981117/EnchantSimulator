@@ -44,11 +44,18 @@ class UI {
 
         const mob = game.currentMob;
 
-        // 몹 이름 (스킬 포함)
+        // 몹 이름 (스킬, 저항, 약점 포함)
         const mobType = mob.isBoss ? 'BOSS' : 'Mob';
         const skillName = mob.getSkillName();
         const skillText = skillName ? ` [${skillName}]` : '';
-        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})${skillText}`;
+        const resistanceText = mob.getResistanceText();
+        const weaknessText = mob.getWeaknessText();
+
+        let extraInfo = skillText;
+        if (resistanceText) extraInfo += ` [${resistanceText}]`;
+        if (weaknessText) extraInfo += ` [${weaknessText}]`;
+
+        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})${extraInfo}`;
 
         // HP 표시
         this.elements.mobHP.textContent = `${mob.currentHP} / ${mob.maxHP}`;
@@ -819,15 +826,10 @@ class UI {
         else if (rand < 0.10) skillCount = 3;
         else if (rand < 0.35) skillCount = 2;
 
-        // 사용 가능한 스킬 키 목록
-        const allSkillKeys = Object.keys(CONFIG.weaponSkills);
-        const availableSkills = allSkillKeys.filter(key => !weapon.enchantments.includes(key));
-
         // 남은 슬롯 수 고려
         const maxPossibleSkills = Math.min(
             skillCount,
-            CONFIG.enchant.maxSkills - weapon.enchantments.length,
-            availableSkills.length
+            CONFIG.enchant.maxSkills - weapon.enchantments.length
         );
 
         if (maxPossibleSkills <= 0) {
@@ -836,11 +838,33 @@ class UI {
             return;
         }
 
-        // 랜덤으로 스킬 선택
+        // 각 스킬마다 등급 결정 후 선택
         const addedSkills = [];
         for (let i = 0; i < maxPossibleSkills; i++) {
-            const randomIndex = Math.floor(Math.random() * availableSkills.length);
-            const selectedSkill = availableSkills.splice(randomIndex, 1)[0];
+            // 스킬 등급 결정 (일반 65%, 마법 25%, 영웅 9%, 전설 1%)
+            const gradeRand = Math.random();
+            let skillLevel = 1;
+            if (gradeRand < 0.01) skillLevel = 4;      // 전설 (1%)
+            else if (gradeRand < 0.10) skillLevel = 3; // 영웅 (9%)
+            else if (gradeRand < 0.35) skillLevel = 2; // 마법 (25%)
+            else skillLevel = 1;                        // 일반 (65%)
+
+            // 해당 등급의 사용 가능한 스킬 목록
+            const allSkillKeys = Object.keys(CONFIG.weaponSkills);
+            const gradeSkills = allSkillKeys.filter(key => {
+                const skillName = CONFIG.weaponSkills[key].name;
+                const levelSuffix = ['I', 'II', 'III', 'IV'][skillLevel - 1];
+                return skillName.endsWith(levelSuffix) && !weapon.enchantments.includes(key);
+            });
+
+            if (gradeSkills.length === 0) {
+                // 해당 등급에 사용 가능한 스킬이 없으면 스킵
+                continue;
+            }
+
+            // 랜덤으로 스킬 선택
+            const randomIndex = Math.floor(Math.random() * gradeSkills.length);
+            const selectedSkill = gradeSkills[randomIndex];
             weapon.addEnchantment(selectedSkill);
             addedSkills.push(CONFIG.weaponSkills[selectedSkill].name);
         }

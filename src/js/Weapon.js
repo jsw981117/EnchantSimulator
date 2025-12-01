@@ -14,6 +14,13 @@ class Weapon {
         this.enhanceGrade = null; // 강화 등급 (normal, great, super, master)
         this.enchantments = []; // 인챈트 스킬 목록
 
+        // 속성 시스템 (30% 확률로 속성 부여)
+        this.element = null;
+        if (Math.random() < CONFIG.weaponElement.chance) {
+            const elementIndex = Math.floor(Math.random() * CONFIG.elements.length);
+            this.element = CONFIG.elements[elementIndex];
+        }
+
         this.attack = this.calculateAttack();
         this.maxDurability = this.calculateMaxDurability();
         this.currentDurability = this.maxDurability;
@@ -174,6 +181,11 @@ class Weapon {
     // 무기 이름
     getName() {
         let name = this.weaponType.name;
+
+        // 속성 표시
+        if (this.element) {
+            name = `${this.element} ${name}`;
+        }
 
         if (this.enhanceLevel > 0) {
             name = `+${this.enhanceLevel} ${name}`;
