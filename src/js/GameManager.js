@@ -274,6 +274,11 @@ class GameManager {
 
     // 게임 시작
     start() {
+        // 기본 무기 생성 및 자동 장착
+        const starterWeapon = new Weapon(0);
+        this.addToInventory(starterWeapon);
+        this.equipWeapon(starterWeapon);
+
         this.spawnMob();
         ui.updateResources();
         ui.updateStage();

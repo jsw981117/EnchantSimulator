@@ -17,10 +17,8 @@ class UI {
         this.elements.inventoryModal = document.getElementById('inventory-modal');
         this.elements.inventoryList = document.getElementById('inventory-list');
         this.elements.enhanceModal = document.getElementById('enhance-modal');
-        this.elements.enhanceWeaponSelect = document.getElementById('enhance-weapon-select');
-        this.elements.enhanceWeaponList = document.getElementById('enhance-weapon-list');
-        this.elements.enhancePanel = document.getElementById('enhance-panel');
         this.selectedWeaponForEnhance = null;
+        this.selectedWeaponForDetail = null;
         this.elements.shopModal = document.getElementById('shop-modal');
         this.elements.buyPanel = document.getElementById('buy-panel');
         this.elements.sellPanel = document.getElementById('sell-panel');
@@ -59,8 +57,11 @@ class UI {
 
     // 장착 무기 표시 업데이트
     updateEquippedWeapon() {
+        const actionsDiv = document.getElementById('equipped-weapon-actions');
+
         if (!game.equippedWeapon) {
             this.elements.equippedWeaponDetails.innerHTML = '무기 없음';
+            actionsDiv.style.display = 'none';
             return;
         }
 
@@ -70,6 +71,8 @@ class UI {
             <div>공격력: ${weapon.attack}</div>
             <div>내구도: ${weapon.currentDurability} / ${weapon.maxDurability}</div>
         `;
+
+        actionsDiv.style.display = 'block';
     }
 
     // 인벤토리 모달 열기
@@ -98,6 +101,8 @@ class UI {
             if (game.equippedWeapon === weapon) {
                 itemDiv.classList.add('equipped');
             }
+            itemDiv.style.cursor = 'pointer';
+            itemDiv.dataset.weaponId = weapon.id;
 
             itemDiv.innerHTML = `
                 <div class="weapon-info">
@@ -107,12 +112,6 @@ class UI {
                         내구도: ${weapon.currentDurability}/${weapon.maxDurability} |
                         판매가: ${weapon.getSellPrice()}G
                     </div>
-                </div>
-                <div class="weapon-actions">
-                    <button class="equip-btn" data-weapon-id="${weapon.id}">
-                        ${game.equippedWeapon === weapon ? '해제' : '장착'}
-                    </button>
-                    <button class="sell-btn" data-weapon-id="${weapon.id}">판매</button>
                 </div>
             `;
 
@@ -125,42 +124,46 @@ class UI {
 
     // 인벤토리 이벤트 리스너
     attachInventoryEventListeners() {
-        // 장착/해제 버튼
-        document.querySelectorAll('.equip-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const weaponId = parseFloat(e.target.dataset.weaponId);
+        // 아이템 클릭 시 상세 모달 열기
+        document.querySelectorAll('.inventory-item').forEach(itemDiv => {
+            itemDiv.addEventListener('click', (e) => {
+                const weaponId = parseFloat(itemDiv.dataset.weaponId);
                 const weapon = game.inventory.find(w => w.id === weaponId);
-
-                if (game.equippedWeapon === weapon) {
-                    game.unequipWeapon();
-                } else {
-                    game.equipWeapon(weapon);
-                }
-
-                this.updateInventoryList();
-            });
-        });
-
-        // 판매 버튼
-        document.querySelectorAll('.sell-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const weaponId = parseFloat(e.target.dataset.weaponId);
-                const weapon = game.inventory.find(w => w.id === weaponId);
-
-                if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
-                    game.sellWeapon(weapon);
-                    this.updateInventoryList();
-                }
+                this.openWeaponDetail(weapon);
             });
         });
     }
 
+    // 무기 상세 모달 열기
+    openWeaponDetail(weapon) {
+        this.selectedWeaponForDetail = weapon;
+
+        // 무기 정보 표시
+        document.getElementById('weapon-detail-name').textContent = weapon.getName();
+        document.getElementById('detail-attack').textContent = weapon.attack;
+        document.getElementById('detail-level').textContent = `+${weapon.enhanceLevel}`;
+        document.getElementById('detail-durability').textContent =
+            `${weapon.currentDurability} / ${weapon.maxDurability}`;
+        document.getElementById('detail-sell-price').textContent = `${weapon.getSellPrice()}G`;
+
+        // 장착 버튼 텍스트 설정
+        const equipBtn = document.getElementById('detail-equip-btn');
+        equipBtn.textContent = game.equippedWeapon === weapon ? '장착 해제' : '장착';
+
+        // 모달 표시
+        document.getElementById('weapon-detail-modal').style.display = 'flex';
+    }
+
+    // 무기 상세 모달 닫기
+    closeWeaponDetail() {
+        document.getElementById('weapon-detail-modal').style.display = 'none';
+        this.selectedWeaponForDetail = null;
+    }
+
     // 강화 모달 열기
-    openEnhance() {
-        this.selectedWeaponForEnhance = null;
-        this.elements.enhanceWeaponSelect.style.display = 'block';
-        this.elements.enhancePanel.style.display = 'none';
-        this.updateEnhanceWeaponList();
+    openEnhance(weapon) {
+        this.selectedWeaponForEnhance = weapon;
+        this.updateEnhancePanel();
         this.elements.enhanceModal.style.display = 'flex';
     }
 
@@ -168,53 +171,6 @@ class UI {
     closeEnhance() {
         this.elements.enhanceModal.style.display = 'none';
         this.selectedWeaponForEnhance = null;
-    }
-
-    // 강화 무기 목록 업데이트
-    updateEnhanceWeaponList() {
-        this.elements.enhanceWeaponList.innerHTML = '';
-
-        if (game.inventory.length === 0) {
-            this.elements.enhanceWeaponList.innerHTML = '<p class="empty-message">인벤토리가 비어있습니다.</p>';
-            return;
-        }
-
-        game.inventory.forEach(weapon => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'inventory-item';
-
-            itemDiv.innerHTML = `
-                <div class="weapon-info">
-                    <div class="weapon-name">${weapon.getName()}</div>
-                    <div class="weapon-stats">
-                        공격력: ${weapon.attack} |
-                        내구도: ${weapon.currentDurability}/${weapon.maxDurability}
-                    </div>
-                </div>
-                <div class="weapon-actions">
-                    <button class="select-enhance-btn" data-weapon-id="${weapon.id}">선택</button>
-                </div>
-            `;
-
-            this.elements.enhanceWeaponList.appendChild(itemDiv);
-        });
-
-        // 이벤트 리스너
-        document.querySelectorAll('.select-enhance-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const weaponId = parseFloat(e.target.dataset.weaponId);
-                const weapon = game.inventory.find(w => w.id === weaponId);
-                this.selectWeaponForEnhance(weapon);
-            });
-        });
-    }
-
-    // 강화할 무기 선택
-    selectWeaponForEnhance(weapon) {
-        this.selectedWeaponForEnhance = weapon;
-        this.elements.enhanceWeaponSelect.style.display = 'none';
-        this.elements.enhancePanel.style.display = 'block';
-        this.updateEnhancePanel();
     }
 
     // 강화 패널 업데이트

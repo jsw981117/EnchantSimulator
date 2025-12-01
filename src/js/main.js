@@ -46,9 +46,64 @@ function setupEventListeners() {
         }
     });
 
-    // 강화 버튼
-    document.getElementById('enhance-btn').addEventListener('click', () => {
-        ui.openEnhance();
+    // 장착 무기 강화 버튼
+    document.getElementById('equipped-enhance-btn').addEventListener('click', () => {
+        ui.openEnhance(game.equippedWeapon);
+    });
+
+    // 장착 무기 판매 버튼
+    document.getElementById('equipped-sell-btn').addEventListener('click', () => {
+        if (game.equippedWeapon && confirm(`${game.equippedWeapon.getName()}을(를) ${game.equippedWeapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+            game.sellWeapon(game.equippedWeapon);
+        }
+    });
+
+    // 무기 상세 모달 닫기
+    document.getElementById('close-weapon-detail').addEventListener('click', () => {
+        ui.closeWeaponDetail();
+    });
+
+    // 무기 상세 모달 배경 클릭 시 닫기
+    document.getElementById('weapon-detail-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'weapon-detail-modal') {
+            ui.closeWeaponDetail();
+        }
+    });
+
+    // 무기 상세 - 장착 버튼
+    document.getElementById('detail-equip-btn').addEventListener('click', () => {
+        const weapon = ui.selectedWeaponForDetail;
+        if (!weapon) return;
+
+        if (game.equippedWeapon === weapon) {
+            game.unequipWeapon();
+        } else {
+            game.equipWeapon(weapon);
+        }
+
+        ui.closeWeaponDetail();
+        ui.updateInventoryList();
+    });
+
+    // 무기 상세 - 강화 버튼
+    document.getElementById('detail-enhance-btn').addEventListener('click', () => {
+        const weapon = ui.selectedWeaponForDetail;
+        if (!weapon) return;
+
+        ui.closeWeaponDetail();
+        ui.openEnhance(weapon);
+    });
+
+    // 무기 상세 - 판매 버튼
+    document.getElementById('detail-sell-btn').addEventListener('click', () => {
+        const weapon = ui.selectedWeaponForDetail;
+        if (!weapon) return;
+
+        if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+            game.sellWeapon(weapon);
+            ui.closeWeaponDetail();
+            ui.updateInventoryList();
+        }
     });
 
     // 강화 모달 닫기
