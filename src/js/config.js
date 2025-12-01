@@ -92,6 +92,136 @@ const CONFIG = {
         attackSpeedPerEnhance: 0.05, // 강화 수치당 공격속도 증가 (5%)
     },
 
+    // 무기 타입 목록
+    weaponTypes: [
+        {
+            name: '검',
+            baseAttack: 10,
+            attackSpeed: 1.0,
+            durability: 100,
+        },
+        {
+            name: '도끼',
+            baseAttack: 15,
+            attackSpeed: 0.7,
+            durability: 120,
+        },
+        {
+            name: '창',
+            baseAttack: 12,
+            attackSpeed: 0.9,
+            durability: 90,
+        },
+        {
+            name: '단검',
+            baseAttack: 7,
+            attackSpeed: 1.5,
+            durability: 70,
+        },
+        {
+            name: '둔기',
+            baseAttack: 13,
+            attackSpeed: 0.8,
+            durability: 130,
+        },
+    ],
+
+    // 강화 등급 시스템
+    enhanceGrades: {
+        normal: {
+            name: '일반',
+            chance: 0.65,
+            multiplier: 0.5,
+        },
+        great: {
+            name: '대박',
+            chance: 0.25,
+            multiplier: 1.0,
+        },
+        super: {
+            name: '초대박',
+            chance: 0.09,
+            multiplier: 2.0,
+        },
+        master: {
+            name: '장인의 손길',
+            chance: 0.01,
+            multiplier: 5.0,
+        },
+    },
+
+    // 인챈트 시스템
+    enchant: {
+        maxSkills: 4,
+        stoneCost: 1,
+        skillCountChances: [0.65, 0.25, 0.09, 0.01], // 1개, 2개, 3개, 4개
+    },
+
+    // 무기 스킬 목록
+    weaponSkills: {
+        // 화염 - 3초간 매초 2대미지 화상
+        flame: {
+            name: '화염',
+            burnDamage: 2,
+            burnDuration: 3,
+        },
+        // 맹독 - 5초간 매초 1대미지 중독
+        poison: {
+            name: '맹독',
+            poisonDamage: 1,
+            poisonDuration: 5,
+        },
+        // 신속 - 공격속도 +100%
+        swift: {
+            name: '신속',
+            attackSpeedBonus: 1.0,
+        },
+        // 행운 - 스킬 발동 확률 +25%
+        lucky: {
+            name: '행운',
+            procChanceBonus: 0.25,
+        },
+        // 처형 - 체력 10% 이하 처치, 보스 5% 이하
+        execute: {
+            name: '처형',
+            normalThreshold: 0.1,
+            bossThreshold: 0.05,
+        },
+        // 흡수 - 공격 시 내구도 회복
+        absorb: {
+            name: '흡수',
+            durabilityRecovery: 1,
+        },
+        // 거인 학살자 - 보스 대미지 +15%
+        giantSlayer: {
+            name: '거인 학살자',
+            bossDamageBonus: 0.15,
+        },
+        // 어둠의 장막 - 첫 공격 250% 대미지
+        darkness: {
+            name: '어둠의 장막',
+            firstAttackMultiplier: 2.5,
+        },
+        // 양손잡이 - 공격속도 -25%, 대미지 2배
+        twoHanded: {
+            name: '양손잡이',
+            attackSpeedPenalty: 0.25,
+            damageMultiplier: 2.0,
+        },
+        // 이도류 - 대미지 -25%, 2회 공격
+        dualWield: {
+            name: '이도류',
+            damagePenalty: 0.25,
+            attackCount: 2,
+        },
+        // 황금향 - 공격 시 10% 확률로 골드 획득
+        golden: {
+            name: '황금향',
+            goldChance: 0.1,
+            goldAmount: 5,
+        },
+    },
+
     // 상점 관련
     shop: {
         appearChance: 0.1,       // 상점 등장 확률 (10%)

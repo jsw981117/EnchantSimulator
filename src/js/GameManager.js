@@ -296,8 +296,24 @@ class GameManager {
         const isSuccess = Math.random() < successRate;
 
         if (isSuccess) {
+            // 강화 등급 결정
+            const gradeRoll = Math.random();
+            let grade = 'normal';
+
+            if (gradeRoll < CONFIG.enhanceGrades.master.chance) {
+                grade = 'master';
+            } else if (gradeRoll < CONFIG.enhanceGrades.master.chance + CONFIG.enhanceGrades.super.chance) {
+                grade = 'super';
+            } else if (gradeRoll < CONFIG.enhanceGrades.master.chance + CONFIG.enhanceGrades.super.chance + CONFIG.enhanceGrades.great.chance) {
+                grade = 'great';
+            }
+
             // 강화 성공
-            weapon.enhanceSuccess();
+            weapon.enhanceSuccess(grade);
+
+            const gradeName = CONFIG.enhanceGrades[grade].name;
+            const gradeMessage = grade !== 'normal' ? ` [${gradeName}]` : '';
+
             ui.updateEquippedWeapon();
             // 장착 중인 무기를 강화했다면 자동 공격 간격 업데이트
             if (this.equippedWeapon === weapon && this.autoAttackEnabled) {
@@ -306,8 +322,9 @@ class GameManager {
             return {
                 success: true,
                 isEnhanceSuccess: true,
-                message: `강화 성공! ${weapon.getName()}이(가) 되었습니다!`,
-                weapon: weapon
+                message: `강화 성공!${gradeMessage} ${weapon.getName()}이(가) 되었습니다!`,
+                weapon: weapon,
+                grade: grade
             };
         } else {
             // 강화 실패

@@ -41,6 +41,7 @@
             <div id="equipped-weapon-details">무기 없음</div>
             <div id="equipped-weapon-actions" style="display: none; margin-top: 10px;">
                 <button id="equipped-enhance-btn" class="equipped-action-btn enhance-action">강화</button>
+                <button id="equipped-enchant-btn" class="equipped-action-btn enchant-action">인챈트</button>
                 <button id="equipped-sell-btn" class="equipped-action-btn sell-action">판매</button>
             </div>
         </div>
@@ -102,7 +103,41 @@
                 <div class="weapon-detail-actions">
                     <button id="detail-equip-btn" class="detail-action-btn">장착</button>
                     <button id="detail-enhance-btn" class="detail-action-btn enhance-action">강화</button>
+                    <button id="detail-enchant-btn" class="detail-action-btn enchant-action">인챈트</button>
                     <button id="detail-sell-btn" class="detail-action-btn sell-action">판매</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 인챈트 모달 -->
+    <div id="enchant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>무기 인챈트</h2>
+                <button class="close-btn" id="close-enchant">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="enchant-info">
+                    <h3 id="enchant-weapon-name"></h3>
+                    <div class="enchant-stats">
+                        <div>현재 인챈트: <span id="enchant-current-count">0 / 4</span></div>
+                        <div id="enchant-current-list"></div>
+                    </div>
+                </div>
+
+                <div class="enchant-controls">
+                    <div class="enchant-row">
+                        <label>필요 강화석:</label>
+                        <span id="enchant-cost" class="highlight">1개</span>
+                    </div>
+
+                    <div class="enchant-warning">
+                        <p>ℹ️ 무기에 랜덤 스킬이 1~4개 추가됩니다</p>
+                        <p>ℹ️ 중복된 스킬은 추가되지 않습니다</p>
+                    </div>
+
+                    <button id="enchant-execute-btn" class="enchant-btn-large">인챈트하기</button>
                 </div>
             </div>
         </div>
@@ -198,6 +233,7 @@
                     <button class="settings-tab active" data-tab="basic">기본</button>
                     <button class="settings-tab" data-tab="enhance">강화/무기</button>
                     <button class="settings-tab" data-tab="skills">스킬</button>
+                    <button class="settings-tab" data-tab="weapons">무기 관리</button>
                 </div>
 
                 <!-- 기본 설정 탭 -->
@@ -422,6 +458,16 @@
                             <label>최대 회복 비율 (0~1):</label>
                             <input type="number" id="whetstone-maxHealRatio" min="0" max="1" step="0.05">
                         </div>
+                    </div>
+                </div>
+
+                <!-- 무기 관리 탭 -->
+                <div id="weapons-settings" class="settings-panel" style="display: none;">
+                    <div class="settings-section">
+                        <h3>무기 타입 관리</h3>
+                        <p class="info-text">게임에 등장할 무기 타입을 관리합니다</p>
+                        <button id="add-weapon-type-btn" class="weapon-manage-btn">무기 타입 추가</button>
+                        <div id="weapon-types-list" class="weapon-types-container"></div>
                     </div>
                 </div>
 

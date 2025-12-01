@@ -59,6 +59,13 @@ function setupEventListeners() {
         ui.openEnhance(game.equippedWeapon);
     });
 
+    // 장착 무기 인챈트 버튼
+    document.getElementById('equipped-enchant-btn').addEventListener('click', () => {
+        if (game.equippedWeapon) {
+            ui.openEnchantModal(game.equippedWeapon);
+        }
+    });
+
     // 장착 무기 판매 버튼
     document.getElementById('equipped-sell-btn').addEventListener('click', () => {
         if (game.equippedWeapon && confirm(`${game.equippedWeapon.getName()}을(를) ${game.equippedWeapon.getSellPrice()}G에 판매하시겠습니까?`)) {
@@ -105,6 +112,15 @@ function setupEventListeners() {
         ui.openEnhance(weapon);
     });
 
+    // 무기 상세 - 인챈트 버튼
+    document.getElementById('detail-enchant-btn').addEventListener('click', () => {
+        const weapon = ui.selectedWeaponForDetail;
+        if (!weapon) return;
+
+        ui.closeWeaponDetail();
+        ui.openEnchantModal(weapon);
+    });
+
     // 무기 상세 - 판매 버튼
     document.getElementById('detail-sell-btn').addEventListener('click', () => {
         const weapon = ui.selectedWeaponForDetail;
@@ -140,6 +156,23 @@ function setupEventListeners() {
     // 강화 실행 버튼
     document.getElementById('enhance-execute-btn').addEventListener('click', () => {
         ui.executeEnhance();
+    });
+
+    // 인챈트 모달 닫기
+    document.getElementById('close-enchant').addEventListener('click', () => {
+        ui.closeEnchantModal();
+    });
+
+    // 인챈트 모달 배경 클릭 시 닫기
+    document.getElementById('enchant-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'enchant-modal') {
+            ui.closeEnchantModal();
+        }
+    });
+
+    // 인챈트 실행 버튼
+    document.getElementById('enchant-execute-btn').addEventListener('click', () => {
+        ui.executeEnchant();
     });
 
     // 상점 닫기 버튼
@@ -200,5 +233,34 @@ function setupEventListeners() {
     // 설정 초기화 버튼
     document.getElementById('reset-settings-btn').addEventListener('click', () => {
         ui.resetSettings();
+    });
+
+    // 무기 타입 추가 버튼
+    document.getElementById('add-weapon-type-btn').addEventListener('click', () => {
+        const newIndex = CONFIG.weaponTypes.length;
+        CONFIG.weaponTypes.push({
+            name: '새 무기',
+            baseAttack: 10,
+            attackSpeed: 1.0,
+            durability: 100
+        });
+        ui.addWeaponTypeToForm(newIndex);
+    });
+
+    // 무기 타입 삭제 버튼 (이벤트 위임)
+    document.getElementById('weapon-types-list').addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-weapon-type-btn')) {
+            if (CONFIG.weaponTypes.length <= 1) {
+                alert('최소 1개의 무기 타입은 필요합니다!');
+                return;
+            }
+
+            const index = parseInt(e.target.dataset.index);
+            const item = e.target.closest('.weapon-type-item');
+
+            if (confirm('이 무기 타입을 삭제하시겠습니까?')) {
+                item.remove();
+            }
+        }
     });
 }

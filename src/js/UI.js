@@ -68,13 +68,40 @@ class UI {
         }
 
         const weapon = game.equippedWeapon;
-        this.elements.equippedWeaponDetails.innerHTML = `
+        let html = `
             <div><strong>${weapon.getName()}</strong></div>
             <div>공격력: ${weapon.attack}</div>
             <div>내구도: ${weapon.currentDurability} / ${weapon.maxDurability}</div>
         `;
 
+        // 인챈트 스킬 표시
+        if (weapon.enchantments && weapon.enchantments.length > 0) {
+            const skillNames = weapon.getEnchantmentNames().join(', ');
+            html += `<div>스킬: ${skillNames}</div>`;
+        }
+
+        this.elements.equippedWeaponDetails.innerHTML = html;
         actionsDiv.style.display = 'block';
+
+        // 버튼에 비용 표시
+        const enhanceBtn = document.getElementById('equipped-enhance-btn');
+        const enchantBtn = document.getElementById('equipped-enchant-btn');
+        const sellBtn = document.getElementById('equipped-sell-btn');
+
+        if (enhanceBtn) {
+            const enhanceCost = weapon.getEnhanceCost();
+            enhanceBtn.innerHTML = `강화<br><span style="font-size: 0.8em; opacity: 0.8;">(${enhanceCost}G)</span>`;
+        }
+
+        if (enchantBtn) {
+            const enchantCost = CONFIG.enchant.stoneCost;
+            enchantBtn.innerHTML = `인챈트<br><span style="font-size: 0.8em; opacity: 0.8;">(${enchantCost}개)</span>`;
+        }
+
+        if (sellBtn) {
+            const sellPrice = weapon.getSellPrice();
+            sellBtn.innerHTML = `판매<br><span style="font-size: 0.8em; opacity: 0.8;">(${sellPrice}G)</span>`;
+        }
     }
 
     // 인벤토리 모달 열기
@@ -152,6 +179,26 @@ class UI {
         // 장착 버튼 텍스트 설정
         const equipBtn = document.getElementById('detail-equip-btn');
         equipBtn.textContent = game.equippedWeapon === weapon ? '장착 해제' : '장착';
+
+        // 버튼에 비용 표시
+        const enhanceBtn = document.getElementById('detail-enhance-btn');
+        const enchantBtn = document.getElementById('detail-enchant-btn');
+        const sellBtn = document.getElementById('detail-sell-btn');
+
+        if (enhanceBtn) {
+            const enhanceCost = weapon.getEnhanceCost();
+            enhanceBtn.innerHTML = `강화<br><span style="font-size: 0.8em; opacity: 0.8;">(${enhanceCost}G)</span>`;
+        }
+
+        if (enchantBtn) {
+            const enchantCost = CONFIG.enchant.stoneCost;
+            enchantBtn.innerHTML = `인챈트<br><span style="font-size: 0.8em; opacity: 0.8;">(${enchantCost}개)</span>`;
+        }
+
+        if (sellBtn) {
+            const sellPrice = weapon.getSellPrice();
+            sellBtn.innerHTML = `판매<br><span style="font-size: 0.8em; opacity: 0.8;">(${sellPrice}G)</span>`;
+        }
 
         // 모달 표시
         document.getElementById('weapon-detail-modal').style.display = 'flex';
@@ -476,6 +523,9 @@ class UI {
 
         document.getElementById('whetstone-minHealRatio').value = CONFIG.mobSkills.whetstone.minHealRatio;
         document.getElementById('whetstone-maxHealRatio').value = CONFIG.mobSkills.whetstone.maxHealRatio;
+
+        // 무기 타입 목록 로드
+        this.loadWeaponTypesToForm();
     }
 
     // 설정 적용
@@ -537,6 +587,11 @@ class UI {
         CONFIG.mobSkills.whetstone.minHealRatio = parseFloat(document.getElementById('whetstone-minHealRatio').value);
         CONFIG.mobSkills.whetstone.maxHealRatio = parseFloat(document.getElementById('whetstone-maxHealRatio').value);
 
+        // 무기 타입 저장
+        if (!this.saveWeaponTypesFromForm()) {
+            return;
+        }
+
         // localStorage에 저장
         localStorage.setItem('enchantSimulatorConfig', JSON.stringify(CONFIG));
 
@@ -573,5 +628,176 @@ class UI {
                 console.error('설정 로드 실패:', e);
             }
         }
+    }
+
+    // 무기 타입 목록을 폼에 로드
+    loadWeaponTypesToForm() {
+        const container = document.getElementById('weapon-types-list');
+        container.innerHTML = '';
+
+        CONFIG.weaponTypes.forEach((type, index) => {
+            this.addWeaponTypeToForm(index);
+        });
+    }
+
+    // 무기 타입 하나를 폼에 추가
+    addWeaponTypeToForm(index) {
+        const container = document.getElementById('weapon-types-list');
+        const weaponType = CONFIG.weaponTypes[index];
+
+        const div = document.createElement('div');
+        div.className = 'weapon-type-item';
+        div.dataset.index = index;
+        div.innerHTML = `
+            <div class="weapon-type-header">
+                <h4>무기 타입 #${index + 1}</h4>
+                <button class="delete-weapon-type-btn" data-index="${index}">삭제</button>
+            </div>
+            <div class="setting-row">
+                <label>이름:</label>
+                <input type="text" class="weapon-type-name" value="${weaponType.name}">
+            </div>
+            <div class="setting-row">
+                <label>기본 공격력:</label>
+                <input type="number" class="weapon-type-attack" min="1" value="${weaponType.baseAttack}">
+            </div>
+            <div class="setting-row">
+                <label>공격속도:</label>
+                <input type="number" class="weapon-type-speed" min="0.1" step="0.1" value="${weaponType.attackSpeed}">
+            </div>
+            <div class="setting-row">
+                <label>내구도:</label>
+                <input type="number" class="weapon-type-durability" min="1" value="${weaponType.durability}">
+            </div>
+        `;
+
+        container.appendChild(div);
+    }
+
+    // 폼에서 무기 타입 저장
+    saveWeaponTypesFromForm() {
+        const items = document.querySelectorAll('.weapon-type-item');
+        const newWeaponTypes = [];
+
+        items.forEach(item => {
+            const name = item.querySelector('.weapon-type-name').value.trim();
+            const baseAttack = parseFloat(item.querySelector('.weapon-type-attack').value);
+            const attackSpeed = parseFloat(item.querySelector('.weapon-type-speed').value);
+            const durability = parseFloat(item.querySelector('.weapon-type-durability').value);
+
+            if (name && baseAttack > 0 && attackSpeed > 0 && durability > 0) {
+                newWeaponTypes.push({
+                    name,
+                    baseAttack,
+                    attackSpeed,
+                    durability
+                });
+            }
+        });
+
+        if (newWeaponTypes.length === 0) {
+            alert('최소 1개 이상의 무기 타입이 필요합니다!');
+            return false;
+        }
+
+        CONFIG.weaponTypes = newWeaponTypes;
+        return true;
+    }
+
+    // 인챈트 모달 열기
+    openEnchantModal(weapon) {
+        this.selectedWeaponForEnchant = weapon;
+
+        // 무기 정보 표시
+        document.getElementById('enchant-weapon-name').textContent = weapon.getName();
+        document.getElementById('enchant-current-count').textContent =
+            `${weapon.enchantments.length} / ${CONFIG.enchant.maxSkills}`;
+
+        // 현재 인챈트 목록 표시
+        const listDiv = document.getElementById('enchant-current-list');
+        if (weapon.enchantments.length > 0) {
+            const skillNames = weapon.getEnchantmentNames();
+            listDiv.innerHTML = '<div style="margin-top: 5px;">현재 스킬: ' + skillNames.join(', ') + '</div>';
+        } else {
+            listDiv.innerHTML = '<div style="margin-top: 5px; opacity: 0.7;">스킬 없음</div>';
+        }
+
+        // 비용 표시
+        document.getElementById('enchant-cost').textContent = `${CONFIG.enchant.stoneCost}개`;
+
+        // 모달 표시
+        document.getElementById('enchant-modal').style.display = 'flex';
+    }
+
+    // 인챈트 모달 닫기
+    closeEnchantModal() {
+        document.getElementById('enchant-modal').style.display = 'none';
+        this.selectedWeaponForEnchant = null;
+    }
+
+    // 인챈트 실행
+    executeEnchant() {
+        const weapon = this.selectedWeaponForEnchant;
+        if (!weapon) return;
+
+        // 강화석 확인
+        if (game.enhanceStones < CONFIG.enchant.stoneCost) {
+            this.showToast('강화석이 부족합니다!', 'error');
+            return;
+        }
+
+        // 이미 최대 스킬 개수인 경우
+        if (weapon.enchantments.length >= CONFIG.enchant.maxSkills) {
+            this.showToast('이미 최대 스킬 개수입니다!', 'error');
+            return;
+        }
+
+        // 강화석 소모
+        game.enhanceStones -= CONFIG.enchant.stoneCost;
+
+        // 스킬 개수 결정 (1~4개, 확률: 65%, 25%, 9%, 1%)
+        const rand = Math.random();
+        let skillCount = 1;
+        if (rand < 0.01) skillCount = 4;
+        else if (rand < 0.10) skillCount = 3;
+        else if (rand < 0.35) skillCount = 2;
+
+        // 사용 가능한 스킬 키 목록
+        const allSkillKeys = Object.keys(CONFIG.weaponSkills);
+        const availableSkills = allSkillKeys.filter(key => !weapon.enchantments.includes(key));
+
+        // 남은 슬롯 수 고려
+        const maxPossibleSkills = Math.min(
+            skillCount,
+            CONFIG.enchant.maxSkills - weapon.enchantments.length,
+            availableSkills.length
+        );
+
+        if (maxPossibleSkills <= 0) {
+            this.showToast('더 이상 스킬을 추가할 수 없습니다!', 'error');
+            game.enhanceStones += CONFIG.enchant.stoneCost; // 환불
+            return;
+        }
+
+        // 랜덤으로 스킬 선택
+        const addedSkills = [];
+        for (let i = 0; i < maxPossibleSkills; i++) {
+            const randomIndex = Math.floor(Math.random() * availableSkills.length);
+            const selectedSkill = availableSkills.splice(randomIndex, 1)[0];
+            weapon.addEnchantment(selectedSkill);
+            addedSkills.push(CONFIG.weaponSkills[selectedSkill].name);
+        }
+
+        // UI 업데이트
+        this.updateResources();
+        this.updateEquippedWeapon();
+        this.updateInventoryList();
+
+        // 성공 메시지
+        const skillText = addedSkills.join(', ');
+        this.showToast(`인챈트 성공! 획득 스킬: ${skillText}`, 'success');
+
+        // 모달 닫기
+        this.closeEnchantModal();
     }
 }
