@@ -13,6 +13,58 @@ const CONFIG = {
         hpMultiplier: 5,         // 일반 몹 대비 보스 체력 배율
     },
 
+    // 특수 스킬 관련
+    mobSkills: {
+        normalMobChance: 0.15,   // 일반 몹 스킬 보유 확률 (15%)
+        bossMobChance: 0.5,      // 보스 몹 스킬 보유 확률 (50%)
+
+        // 거인화 - 체력 증가
+        giant: {
+            normalHPBonus: 0.25, // 일반 몹 HP 증가 (25%)
+            bossHPBonus: 0.5,    // 보스 HP 증가 (50%)
+        },
+
+        // 부식 - 내구도 소모 증가
+        corrosion: {
+            durabilityMultiplier: 2, // 내구도 소모 배율
+        },
+
+        // 황금상 - 골드 획득
+        golden: {
+            minGold: 5,          // 최소 골드
+            maxGold: 20,         // 최대 골드
+            stageMultiplier: 1.2, // 스테이지당 배율
+        },
+
+        // 혼돈 - 무기 변환
+        chaos: {
+            minEnhanceLevel: 0,  // 변환 무기 최소 강화 수치
+            maxEnhanceLevel: 3,  // 변환 무기 최대 강화 수치
+        },
+
+        // 빙결 - 공격속도 감소
+        frozen: {
+            attackSpeedMultiplier: 0.5, // 공격속도 배율 (50%)
+        },
+
+        // 폭발 - 인벤토리 무기 내구도 감소
+        explosive: {
+            durabilityLossRatio: 0.5, // 내구도 감소 비율 (50%)
+        },
+
+        // 결정화 - 강화석 획득
+        crystal: {
+            minStones: 1,        // 최소 강화석
+            maxStones: 3,        // 최대 강화석
+        },
+
+        // 숫돌화 - 내구도 회복
+        whetstone: {
+            minHealRatio: 0.2,   // 최소 회복 비율 (20%)
+            maxHealRatio: 0.5,   // 최대 회복 비율 (50%)
+        },
+    },
+
     // 드랍 확률
     drop: {
         enhanceStoneChance: 0.1, // 강화석 드랍 확률 (10%)

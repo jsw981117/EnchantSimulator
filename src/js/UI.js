@@ -44,9 +44,11 @@ class UI {
 
         const mob = game.currentMob;
 
-        // 몹 이름
+        // 몹 이름 (스킬 포함)
         const mobType = mob.isBoss ? 'BOSS' : 'Mob';
-        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})`;
+        const skillName = mob.getSkillName();
+        const skillText = skillName ? ` [${skillName}]` : '';
+        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})${skillText}`;
 
         // HP 표시
         this.elements.mobHP.textContent = `${mob.currentHP} / ${mob.maxHP}`;

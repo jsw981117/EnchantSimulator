@@ -58,6 +58,11 @@ class GameManager {
         const isBoss = (this.mobKillCount % CONFIG.mob.mobsPerStage === CONFIG.mob.mobsPerStage - 1);
         this.currentMob = new Mob(this.stage, isBoss);
         ui.updateMob();
+
+        // 빙결 스킬이 있으면 자동 공격 간격 업데이트
+        if (this.autoAttackEnabled && this.currentMob.skill === 'frozen') {
+            this.updateAutoAttackInterval();
+        }
     }
 
     // 몹 공격
@@ -67,16 +72,29 @@ class GameManager {
         const damage = this.getAttackPower();
         this.currentMob.takeDamage(damage);
 
+        // 황금상 스킬: 공격 시 골드 획득
+        if (this.currentMob.skill === 'golden') {
+            const baseGold = CONFIG.mobSkills.golden.minGold +
+                Math.random() * (CONFIG.mobSkills.golden.maxGold - CONFIG.mobSkills.golden.minGold);
+            const stageBonus = Math.pow(CONFIG.mobSkills.golden.stageMultiplier, this.stage - 1);
+            const goldGain = Math.floor(baseGold * stageBonus);
+            this.addGold(goldGain);
+        }
+
         // 무기 내구도 감소 확률
         if (this.equippedWeapon && Math.random() < CONFIG.weapon.attackDurabilityChance) {
-            this.equippedWeapon.reduceDurability(1);
+            // 부식 스킬: 내구도 소모 2배
+            const durabilityLoss = this.currentMob.skill === 'corrosion' ?
+                CONFIG.mobSkills.corrosion.durabilityMultiplier : 1;
+
+            this.equippedWeapon.reduceDurability(durabilityLoss);
 
             // 무기 파괴 체크
             if (this.equippedWeapon.isDestroyed()) {
                 ui.showToast(`${this.equippedWeapon.getName()}이(가) 파괴되었습니다!`, 'error');
                 this.equippedWeapon = null;
                 ui.updateEquippedWeapon();
-                // 자동 공격 중이었다면 재시작
+                // 자동 공격 중이었다면 중지
                 if (this.autoAttackEnabled) {
                     this.stopAutoAttack();
                     ui.updateAutoAttackButton();
@@ -95,6 +113,8 @@ class GameManager {
 
     // 몹 처치 시
     onMobKilled() {
+        const killedMob = this.currentMob;
+
         // 골드 드랍
         this.addGold(CONFIG.mob.goldDrop);
 
@@ -108,13 +128,16 @@ class GameManager {
             const randomEnhanceLevel = Math.floor(Math.random() * 3); // 0~2 강화 수치
             const weapon = new Weapon(randomEnhanceLevel);
             this.addToInventory(weapon);
-            console.log(`${weapon.getName()} 획득!`);
+            ui.showToast(`${weapon.getName()} 획득!`, 'success');
         }
+
+        // 스킬 효과 처리
+        this.applyMobSkillOnKill(killedMob);
 
         this.mobKillCount++;
 
         // 보스였으면 스테이지 증가
-        if (this.currentMob.isBoss) {
+        if (killedMob.isBoss) {
             this.stage++;
             ui.updateStage();
         }
@@ -125,6 +148,83 @@ class GameManager {
         } else {
             // 다음 몹 생성
             this.spawnMob();
+        }
+    }
+
+    // 몹 처치 시 스킬 효과 처리
+    applyMobSkillOnKill(mob) {
+        if (!mob.skill) return;
+
+        switch (mob.skill) {
+            case 'chaos': // 혼돈: 장착 무기를 새 무기로 변환
+                if (this.equippedWeapon) {
+                    const minLevel = CONFIG.mobSkills.chaos.minEnhanceLevel;
+                    const maxLevel = CONFIG.mobSkills.chaos.maxEnhanceLevel;
+                    const newLevel = minLevel + Math.floor(Math.random() * (maxLevel - minLevel + 1));
+                    const oldWeaponName = this.equippedWeapon.getName();
+
+                    // 기존 무기 제거
+                    const index = this.inventory.indexOf(this.equippedWeapon);
+                    if (index !== -1) {
+                        this.inventory.splice(index, 1);
+                    }
+
+                    // 새 무기 생성 및 장착
+                    const newWeapon = new Weapon(newLevel);
+                    this.addToInventory(newWeapon);
+                    this.equipWeapon(newWeapon);
+                    ui.showToast(`혼돈! ${oldWeaponName}이(가) ${newWeapon.getName()}(으)로 변했습니다!`, 'warning');
+                }
+                break;
+
+            case 'explosive': // 폭발: 인벤토리 무기 내구도 감소
+                if (this.inventory.length > 0) {
+                    const randomWeapon = this.inventory[Math.floor(Math.random() * this.inventory.length)];
+                    const lossAmount = Math.floor(randomWeapon.maxDurability * CONFIG.mobSkills.explosive.durabilityLossRatio);
+                    randomWeapon.reduceDurability(lossAmount);
+
+                    if (randomWeapon.isDestroyed()) {
+                        const weaponName = randomWeapon.getName();
+                        const index = this.inventory.indexOf(randomWeapon);
+                        this.inventory.splice(index, 1);
+                        if (this.equippedWeapon === randomWeapon) {
+                            this.equippedWeapon = null;
+                            if (this.autoAttackEnabled) {
+                                this.stopAutoAttack();
+                                ui.updateAutoAttackButton();
+                            }
+                        }
+                        ui.showToast(`폭발! ${weaponName}이(가) 파괴되었습니다!`, 'error');
+                    } else {
+                        ui.showToast(`폭발! ${randomWeapon.getName()}의 내구도가 감소했습니다!`, 'warning');
+                    }
+                    ui.updateEquippedWeapon();
+                }
+                break;
+
+            case 'crystal': // 결정화: 강화석 획득
+                const minStones = CONFIG.mobSkills.crystal.minStones;
+                const maxStones = CONFIG.mobSkills.crystal.maxStones;
+                const stones = minStones + Math.floor(Math.random() * (maxStones - minStones + 1));
+                this.addEnhanceStone(stones);
+                ui.showToast(`결정화! 강화석 ${stones}개 획득!`, 'success');
+                break;
+
+            case 'whetstone': // 숫돌화: 장착 무기 내구도 회복
+                if (this.equippedWeapon) {
+                    const minRatio = CONFIG.mobSkills.whetstone.minHealRatio;
+                    const maxRatio = CONFIG.mobSkills.whetstone.maxHealRatio;
+                    const healRatio = minRatio + Math.random() * (maxRatio - minRatio);
+                    const healAmount = Math.floor(this.equippedWeapon.maxDurability * healRatio);
+
+                    this.equippedWeapon.currentDurability = Math.min(
+                        this.equippedWeapon.currentDurability + healAmount,
+                        this.equippedWeapon.maxDurability
+                    );
+                    ui.showToast(`숫돌화! ${this.equippedWeapon.getName()}의 내구도가 회복되었습니다!`, 'success');
+                    ui.updateEquippedWeapon();
+                }
+                break;
         }
     }
 
@@ -349,7 +449,13 @@ class GameManager {
         }
 
         // 새 인터벌 설정
-        const interval = this.equippedWeapon.getAttackInterval();
+        let interval = this.equippedWeapon.getAttackInterval();
+
+        // 빙결 스킬: 공격속도 감소
+        if (this.currentMob && this.currentMob.skill === 'frozen') {
+            interval = interval / CONFIG.mobSkills.frozen.attackSpeedMultiplier;
+        }
+
         this.autoAttackIntervalId = setInterval(() => {
             this.attackMob();
         }, interval);
