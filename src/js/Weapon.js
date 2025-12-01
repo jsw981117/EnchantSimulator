@@ -69,6 +69,16 @@ class Weapon {
         return Math.floor(this.value * CONFIG.shop.buyRatio);
     }
 
+    // 공격속도 계산 (초당 공격 횟수)
+    getAttackSpeed() {
+        return CONFIG.weapon.baseAttackSpeed * (1 + this.enhanceLevel * CONFIG.weapon.attackSpeedPerEnhance);
+    }
+
+    // 공격 간격 계산 (밀리초)
+    getAttackInterval() {
+        return Math.floor(1000 / this.getAttackSpeed());
+    }
+
     // 무기 이름
     getName() {
         if (this.enhanceLevel === 0) {

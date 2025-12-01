@@ -142,6 +142,7 @@ class UI {
         document.getElementById('weapon-detail-name').textContent = weapon.getName();
         document.getElementById('detail-attack').textContent = weapon.attack;
         document.getElementById('detail-level').textContent = `+${weapon.enhanceLevel}`;
+        document.getElementById('detail-attack-speed').textContent = `${weapon.getAttackSpeed().toFixed(2)}/s`;
         document.getElementById('detail-durability').textContent =
             `${weapon.currentDurability} / ${weapon.maxDurability}`;
         document.getElementById('detail-sell-price').textContent = `${weapon.getSellPrice()}G`;
@@ -217,18 +218,23 @@ class UI {
         const result = game.enhanceWeapon(weapon, stoneCount);
 
         if (result.success) {
-            alert(result.message);
-
-            if (result.isDestroyed) {
-                // 무기 파괴됨
+            if (result.isEnhanceSuccess) {
+                this.showToast(result.message, 'success');
+            } else if (result.isDestroyed) {
+                this.showToast(result.message, 'error');
                 this.closeEnhance();
             } else {
+                this.showToast(result.message, 'warning');
+                this.updateEnhancePanel();
+            }
+
+            if (!result.isDestroyed) {
                 // 강화 성공 or 실패 (파괴 안됨)
                 this.updateEnhancePanel();
             }
         } else {
             // 골드/강화석 부족
-            alert(result.message);
+            this.showToast(result.message, 'error');
         }
     }
 
@@ -305,10 +311,10 @@ class UI {
 
                 const result = game.buyWeapon(weapon);
                 if (result.success) {
-                    alert(result.message);
+                    this.showToast(result.message, 'success');
                     this.updateShopBuyList();
                 } else {
-                    alert(result.message);
+                    this.showToast(result.message, 'error');
                 }
             });
         });
@@ -351,10 +357,35 @@ class UI {
                 const weapon = game.inventory.find(w => w.id === weaponId);
 
                 if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+                    const weaponName = weapon.getName();
+                    const sellPrice = weapon.getSellPrice();
                     game.sellWeapon(weapon);
+                    this.showToast(`${weaponName}을(를) ${sellPrice}G에 판매했습니다!`, 'success');
                     this.updateShopSellList();
                 }
             });
         });
+    }
+
+    // 토스트 메시지 표시
+    showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+
+        container.appendChild(toast);
+
+        // 3초 후 제거
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    // 자동 공격 버튼 텍스트 업데이트
+    updateAutoAttackButton() {
+        const btn = document.getElementById('auto-attack-btn');
+        btn.textContent = game.autoAttackEnabled ? '자동 공격: ON' : '자동 공격: OFF';
+        btn.style.backgroundColor = game.autoAttackEnabled ? '#2a5a2a' : '';
     }
 }

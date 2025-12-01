@@ -36,6 +36,8 @@ const CONFIG = {
         attackDurabilityChance: 0.3, // 공격 시 내구도 감소 확률 (30%)
         baseDurability: 100,         // 기본 내구도
         baseAttack: 10,              // 기본 공격력
+        baseAttackSpeed: 1.0,        // 기본 공격속도 (초당 1회)
+        attackSpeedPerEnhance: 0.05, // 강화 수치당 공격속도 증가 (5%)
     },
 
     // 상점 관련

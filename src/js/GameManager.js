@@ -9,6 +9,8 @@ class GameManager {
         this.equippedWeapon = null;
         this.inventory = [];
         this.shopWeapons = [];
+        this.autoAttackEnabled = false;
+        this.autoAttackIntervalId = null;
     }
 
     // 골드 획득
@@ -71,9 +73,14 @@ class GameManager {
 
             // 무기 파괴 체크
             if (this.equippedWeapon.isDestroyed()) {
-                alert(`${this.equippedWeapon.getName()}이(가) 파괴되었습니다!`);
+                ui.showToast(`${this.equippedWeapon.getName()}이(가) 파괴되었습니다!`, 'error');
                 this.equippedWeapon = null;
                 ui.updateEquippedWeapon();
+                // 자동 공격 중이었다면 재시작
+                if (this.autoAttackEnabled) {
+                    this.stopAutoAttack();
+                    ui.updateAutoAttackButton();
+                }
             }
         }
 
@@ -130,12 +137,21 @@ class GameManager {
     equipWeapon(weapon) {
         this.equippedWeapon = weapon;
         ui.updateEquippedWeapon();
+        // 자동 공격 중이면 간격 업데이트
+        if (this.autoAttackEnabled) {
+            this.updateAutoAttackInterval();
+        }
     }
 
     // 무기 장착 해제
     unequipWeapon() {
         this.equippedWeapon = null;
         ui.updateEquippedWeapon();
+        // 자동 공격 중지
+        if (this.autoAttackEnabled) {
+            this.stopAutoAttack();
+            ui.updateAutoAttackButton();
+        }
     }
 
     // 무기 판매
@@ -183,6 +199,10 @@ class GameManager {
             // 강화 성공
             weapon.enhanceSuccess();
             ui.updateEquippedWeapon();
+            // 장착 중인 무기를 강화했다면 자동 공격 간격 업데이트
+            if (this.equippedWeapon === weapon && this.autoAttackEnabled) {
+                this.updateAutoAttackInterval();
+            }
             return {
                 success: true,
                 isEnhanceSuccess: true,
@@ -202,6 +222,11 @@ class GameManager {
                 }
                 if (this.equippedWeapon === weapon) {
                     this.equippedWeapon = null;
+                    // 자동 공격 중지
+                    if (this.autoAttackEnabled) {
+                        this.stopAutoAttack();
+                        ui.updateAutoAttackButton();
+                    }
                 }
                 ui.updateEquippedWeapon();
 
@@ -282,5 +307,51 @@ class GameManager {
         this.spawnMob();
         ui.updateResources();
         ui.updateStage();
+    }
+
+    // 자동 공격 토글
+    toggleAutoAttack() {
+        if (this.autoAttackEnabled) {
+            this.stopAutoAttack();
+        } else {
+            this.startAutoAttack();
+        }
+        ui.updateAutoAttackButton();
+    }
+
+    // 자동 공격 시작
+    startAutoAttack() {
+        if (!this.equippedWeapon) {
+            ui.showToast('무기를 장착해주세요!', 'warning');
+            return;
+        }
+
+        this.autoAttackEnabled = true;
+        this.updateAutoAttackInterval();
+    }
+
+    // 자동 공격 중지
+    stopAutoAttack() {
+        this.autoAttackEnabled = false;
+        if (this.autoAttackIntervalId) {
+            clearInterval(this.autoAttackIntervalId);
+            this.autoAttackIntervalId = null;
+        }
+    }
+
+    // 자동 공격 간격 업데이트 (무기 변경 시 호출)
+    updateAutoAttackInterval() {
+        if (!this.autoAttackEnabled || !this.equippedWeapon) return;
+
+        // 기존 인터벌 제거
+        if (this.autoAttackIntervalId) {
+            clearInterval(this.autoAttackIntervalId);
+        }
+
+        // 새 인터벌 설정
+        const interval = this.equippedWeapon.getAttackInterval();
+        this.autoAttackIntervalId = setInterval(() => {
+            this.attackMob();
+        }, interval);
     }
 }

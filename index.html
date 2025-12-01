@@ -47,9 +47,13 @@
 
         <!-- 버튼 영역 -->
         <div class="button-area">
+            <button id="auto-attack-btn">자동 공격: OFF</button>
             <button id="inventory-btn">인벤토리</button>
         </div>
     </div>
+
+    <!-- 토스트 메시지 컨테이너 -->
+    <div id="toast-container"></div>
 
     <!-- 인벤토리 모달 -->
     <div id="inventory-modal" class="modal">
@@ -80,6 +84,10 @@
                     <div class="detail-row">
                         <span class="detail-label">강화 수치:</span>
                         <span id="detail-level" class="detail-value">+0</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">공격속도:</span>
+                        <span id="detail-attack-speed" class="detail-value">1.00/s</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">내구도:</span>

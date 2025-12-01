@@ -29,6 +29,11 @@ function setupEventListeners() {
         game.attackMob();
     });
 
+    // 자동 공격 토글 버튼
+    document.getElementById('auto-attack-btn').addEventListener('click', () => {
+        game.toggleAutoAttack();
+    });
+
     // 인벤토리 버튼
     document.getElementById('inventory-btn').addEventListener('click', () => {
         ui.openInventory();
@@ -54,7 +59,10 @@ function setupEventListeners() {
     // 장착 무기 판매 버튼
     document.getElementById('equipped-sell-btn').addEventListener('click', () => {
         if (game.equippedWeapon && confirm(`${game.equippedWeapon.getName()}을(를) ${game.equippedWeapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+            const weaponName = game.equippedWeapon.getName();
+            const sellPrice = game.equippedWeapon.getSellPrice();
             game.sellWeapon(game.equippedWeapon);
+            ui.showToast(`${weaponName}을(를) ${sellPrice}G에 판매했습니다!`, 'success');
         }
     });
 
@@ -100,7 +108,10 @@ function setupEventListeners() {
         if (!weapon) return;
 
         if (confirm(`${weapon.getName()}을(를) ${weapon.getSellPrice()}G에 판매하시겠습니까?`)) {
+            const weaponName = weapon.getName();
+            const sellPrice = weapon.getSellPrice();
             game.sellWeapon(weapon);
+            ui.showToast(`${weaponName}을(를) ${sellPrice}G에 판매했습니다!`, 'success');
             ui.closeWeaponDetail();
             ui.updateInventoryList();
         }
