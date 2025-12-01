@@ -2,8 +2,8 @@
 const CONFIG = {
     // 몹 관련
     mob: {
-        baseHP: 10,              // 기본 몹 체력
-        hpGrowth: 1.2,           // 스테이지당 체력 증가율
+        baseHP: 50,              // 기본 몹 체력
+        hpGrowth: 1.5,           // 스테이지당 체력 증가율
         goldDrop: 10,            // 몹 처치 시 골드 드랍
         mobsPerStage: 10,        // 스테이지당 몹 수
     },
