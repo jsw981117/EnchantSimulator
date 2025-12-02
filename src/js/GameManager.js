@@ -463,6 +463,10 @@ class GameManager {
         this.spawnMob();
         ui.updateResources();
         ui.updateStage();
+
+        // 자동 공격 기본 활성화
+        this.startAutoAttack();
+        ui.updateAutoAttackButton();
     }
 
     // 자동 공격 토글
