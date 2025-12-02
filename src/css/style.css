@@ -601,6 +601,17 @@ button:active {
     margin-bottom: 20px;
 }
 
+/* 환율 표시 */
+.exchange-rate-discount {
+    color: #66ff66;
+    font-weight: bold;
+}
+
+.exchange-rate-premium {
+    color: #ff6666;
+    font-weight: bold;
+}
+
 .shop-tab {
     flex: 1;
     background-color: #3a3a3a;

@@ -5,7 +5,7 @@ const CONFIG = {
         baseHP: 50,              // 기본 몹 체력
         hpGrowth: 1.5,           // 스테이지당 체력 증가율
         goldDrop: 10,            // 몹 처치 시 기본 골드 드랍
-        goldGrowth: 1.2,         // 스테이지당 골드 증가율 (20%)
+        goldGrowth: 1.3,         // 스테이지당 골드 증가율 (30%)
         mobsPerStage: 10,        // 스테이지당 몹 수
     },
 
@@ -188,6 +188,12 @@ const CONFIG = {
     // 무기 속성 관련
     weaponElement: {
         chance: 0.3,  // 무기가 속성을 가질 확률 (30%)
+    },
+
+    // 티어 시스템
+    tier: {
+        statMultiplier: 1.3,     // 티어당 능력치 배율 (30%)
+        valueMultiplier: 1.6,    // 티어당 가치 배율 (60%)
     },
 
     // 몹 저항/약점 시스템
@@ -431,6 +437,19 @@ const CONFIG = {
         sellRatio: 0.58,         // 판매 시 가격 비율 (58%)
         buyRatio: 1.0,           // 구매 시 가격 비율 (100%)
         itemSlots: 3,            // 상점 아이템 슬롯 수
+
+        // 티어 등장 확률 (상점 최대 티어 = 현재 스테이지)
+        tierChances: {
+            plus2: 0.01,   // 스테이지 +2 티어: 1%
+            plus1: 0.09,   // 스테이지 +1 티어: 9%
+            same: 0.25,    // 동일 티어: 25%
+            minus1: 0.30,  // 스테이지 -1 티어: 30%
+            minus2: 0.35,  // 스테이지 -2 티어: 35%
+        },
+
+        // 환율 시스템
+        exchangeRateMin: -0.6,   // 환율 최소 -60%
+        exchangeRateMax: 0.8,    // 환율 최대 +80%
     },
 
     // 플레이어 초기값

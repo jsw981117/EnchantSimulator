@@ -388,13 +388,23 @@ class UI {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'inventory-item';
 
+            // 환율 표시
+            let exchangeRateText = '';
+            if (weapon.shopExchangeRate !== undefined) {
+                const rate = weapon.shopExchangeRate;
+                const ratePercent = Math.round(rate * 100);
+                const rateClass = rate < 0 ? 'exchange-rate-discount' : 'exchange-rate-premium';
+                const rateSign = rate >= 0 ? '+' : '';
+                exchangeRateText = `<span class="${rateClass}">(${rateSign}${ratePercent}%)</span>`;
+            }
+
             itemDiv.innerHTML = `
                 <div class="weapon-info">
                     <div class="weapon-name">${weapon.getName()}</div>
                     <div class="weapon-stats">
                         공격력: ${weapon.attack} |
                         내구도: ${weapon.currentDurability}/${weapon.maxDurability} |
-                        가격: ${weapon.getBuyPrice()}G
+                        가격: ${weapon.getBuyPrice()}G ${exchangeRateText}
                     </div>
                 </div>
                 <div class="weapon-actions">

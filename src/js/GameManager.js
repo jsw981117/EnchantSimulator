@@ -134,7 +134,12 @@ class GameManager {
         // 무기 드랍 확률
         if (Math.random() < CONFIG.drop.weaponChance) {
             const randomEnhanceLevel = Math.floor(Math.random() * 3); // 0~2 강화 수치
-            const weapon = new Weapon(randomEnhanceLevel);
+
+            // 드랍 티어 = 현재 스테이지 ± 1 랜덤
+            const tierOffset = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+            const dropTier = Math.max(1, this.stage + tierOffset);
+
+            const weapon = new Weapon(randomEnhanceLevel, null, dropTier);
             this.addToInventory(weapon);
             ui.showToast(`${weapon.getName()} 획득!`, 'success');
         }
@@ -177,8 +182,10 @@ class GameManager {
                         this.inventory.splice(index, 1);
                     }
 
-                    // 새 무기 생성 및 장착
-                    const newWeapon = new Weapon(newLevel);
+                    // 새 무기 생성 및 장착 (티어는 현재 스테이지 기반)
+                    const tierOffset = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+                    const chaosTier = Math.max(1, this.stage + tierOffset);
+                    const newWeapon = new Weapon(newLevel, null, chaosTier);
                     this.addToInventory(newWeapon);
                     this.equipWeapon(newWeapon);
                     ui.showToast(`혼돈! ${oldWeaponName}이(가) ${newWeapon.getName()}(으)로 변했습니다!`, 'warning');
@@ -381,9 +388,33 @@ class GameManager {
         this.shopWeapons = [];
         for (let i = 0; i < CONFIG.shop.itemSlots; i++) {
             const randomEnhanceLevel = Math.floor(Math.random() * 6); // 0~5 강화 수치
-            const weapon = new Weapon(randomEnhanceLevel);
+
+            // 티어 결정 (스테이지 기반)
+            const tier = this.generateShopWeaponTier();
+
+            const weapon = new Weapon(randomEnhanceLevel, null, tier);
+
+            // 환율 적용 (-60% ~ +80%)
+            const exchangeRate = CONFIG.shop.exchangeRateMin +
+                Math.random() * (CONFIG.shop.exchangeRateMax - CONFIG.shop.exchangeRateMin);
+            weapon.shopExchangeRate = exchangeRate;
+
             this.shopWeapons.push(weapon);
         }
+    }
+
+    // 상점 무기 티어 결정
+    generateShopWeaponTier() {
+        const stage = this.stage;
+        const rand = Math.random();
+
+        let tierOffset = -2; // 기본 stage-2
+        if (rand < 0.01) tierOffset = 2;
+        else if (rand < 0.10) tierOffset = 1;
+        else if (rand < 0.35) tierOffset = 0;
+        else if (rand < 0.65) tierOffset = -1;
+
+        return Math.max(1, stage + tierOffset); // 최소 티어 1
     }
 
     // 상점 열기
