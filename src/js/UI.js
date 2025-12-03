@@ -27,6 +27,13 @@ class UI {
         this.currentShopTab = 'buy';
     }
 
+    // 속성 배지 HTML 생성
+    getElementBadgeHTML(element, type = 'weapon') {
+        const color = CONFIG.elementColors[element] || '#999';
+        const className = type === 'weapon' ? 'element-badge' : `element-badge ${type}`;
+        return `<span class="${className}" style="background-color: ${color};">${element}</span>`;
+    }
+
     // 자원 표시 업데이트
     updateResources() {
         this.elements.goldDisplay.textContent = game.gold;
@@ -44,18 +51,32 @@ class UI {
 
         const mob = game.currentMob;
 
-        // 몹 이름 (스킬, 저항, 약점 포함)
+        // 몹 이름 (스킬 포함)
         const mobType = mob.isBoss ? 'BOSS' : 'Mob';
         const skillName = mob.getSkillName();
         const skillText = skillName ? ` [${skillName}]` : '';
-        const resistanceText = mob.getResistanceText();
-        const weaknessText = mob.getWeaknessText();
 
-        let extraInfo = skillText;
-        if (resistanceText) extraInfo += ` [${resistanceText}]`;
-        if (weaknessText) extraInfo += ` [${weaknessText}]`;
+        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})${skillText}`;
 
-        this.elements.mobName.textContent = `${mobType} (Stage ${mob.stage})${extraInfo}`;
+        // 속성 배지 표시 (저항/약점)
+        const mobElementsDiv = document.getElementById('mob-elements');
+        let elementBadges = '';
+
+        if (mob.resistances.length > 0) {
+            const resistance = mob.resistances[0];
+            const levelMarks = '+'.repeat(resistance.level);
+            const color = CONFIG.elementColors[resistance.element] || '#999';
+            elementBadges += `<span class="element-badge resistance" style="background-color: ${color};">${resistance.element} 저항${levelMarks}</span>`;
+        }
+
+        if (mob.weaknesses.length > 0) {
+            const weakness = mob.weaknesses[0];
+            const levelMarks = '+'.repeat(weakness.level);
+            const color = CONFIG.elementColors[weakness.element] || '#999';
+            elementBadges += `<span class="element-badge weakness" style="background-color: ${color};">${weakness.element} 약점${levelMarks}</span>`;
+        }
+
+        mobElementsDiv.innerHTML = elementBadges;
 
         // HP 표시
         this.elements.mobHP.textContent = `${mob.currentHP} / ${mob.maxHP}`;
@@ -67,9 +88,11 @@ class UI {
     // 장착 무기 표시 업데이트
     updateEquippedWeapon() {
         const actionsDiv = document.getElementById('equipped-weapon-actions');
+        const elementsDiv = document.getElementById('equipped-weapon-elements');
 
         if (!game.equippedWeapon) {
             this.elements.equippedWeaponDetails.innerHTML = '무기 없음';
+            elementsDiv.innerHTML = '';
             actionsDiv.style.display = 'none';
             return;
         }
@@ -88,6 +111,14 @@ class UI {
         }
 
         this.elements.equippedWeaponDetails.innerHTML = html;
+
+        // 속성 배지 표시
+        if (weapon.element) {
+            elementsDiv.innerHTML = this.getElementBadgeHTML(weapon.element, 'weapon');
+        } else {
+            elementsDiv.innerHTML = '';
+        }
+
         actionsDiv.style.display = 'block';
 
         // 버튼에 비용 표시
@@ -179,12 +210,16 @@ class UI {
             const enhanceLevel = weapon.enhanceLevel > 0 ? `+${weapon.enhanceLevel}` : '';
             const gradeClass = weapon.enhanceGrade ? `grade-${weapon.enhanceGrade}` : '';
 
+            // 속성 배지
+            const elementBadge = weapon.element ? this.getElementBadgeHTML(weapon.element, 'weapon') : '';
+
             itemDiv.innerHTML = `
                 <div class="weapon-icon-container ${gradeClass}">
                     <span class="weapon-emoji">${this.getWeaponEmoji(weapon.weaponType.name)}</span>
                     ${enhanceLevel ? `<div class="weapon-enhance-badge">${enhanceLevel}</div>` : ''}
                 </div>
                 <div class="weapon-item-name">${weapon.getName()}</div>
+                ${elementBadge ? `<div class="element-badges">${elementBadge}</div>` : ''}
             `;
 
             // 이미지 로드 시도 (나중에 assets 폴더에 이미지 추가 시 사용)

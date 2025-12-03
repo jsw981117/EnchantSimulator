@@ -230,11 +230,6 @@ class Weapon {
     getName() {
         let name = this.weaponType.name;
 
-        // 속성 표시
-        if (this.element) {
-            name = `${this.element} ${name}`;
-        }
-
         if (this.enhanceLevel > 0) {
             name = `+${this.enhanceLevel} ${name}`;
 

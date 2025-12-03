@@ -612,6 +612,35 @@ button:active {
     font-weight: bold;
 }
 
+/* 속성 배지 */
+.element-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.element-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.element-badge.resistance {
+    opacity: 0.9;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.element-badge.weakness {
+    opacity: 0.9;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
 .shop-tab {
     flex: 1;
     background-color: #3a3a3a;
